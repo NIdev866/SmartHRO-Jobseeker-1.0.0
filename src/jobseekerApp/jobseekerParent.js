@@ -77,7 +77,9 @@ class JobseekerParent extends Component {
                 <h2>PLEASE APPLY FOR THIS JOB BY REGISTERING WITH US.</h2>
                 <h3>Select maximum 3 job boxes to apply for them.<br/>
                     Click on the job to read more about it</h3>
-                <JobCards />
+                <JobCards 
+                  allCampaigns={this.props.allCampaigns}
+                />
               </div>
             }
             {page > 1 && 
@@ -153,5 +155,6 @@ class JobseekerParent extends Component {
 JobseekerParent.propTypes = {
   onSubmit: PropTypes.func.isRequired
 }
+
 
 export default JobseekerParent

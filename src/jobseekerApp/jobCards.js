@@ -5,6 +5,7 @@ import jobs from "../jobs.json"
 import { Field, FieldArray, reduxForm } from 'redux-form'
 import { connect } from "react-redux"
 import { getFormValues } from 'redux-form'
+import { fetchAllCampaigns } from '../actions'
 
 class CheckboxComponent extends Component{
   constructor(props){
@@ -83,7 +84,13 @@ class CardExampleExpandable extends Component{
       this.setState({boxesTicked: this.state.boxesTicked-1})
     }
   }
-  render(){
+  componentWillMount(){
+    this.props.fetchAllCampaigns()
+  }
+  render(){    
+    if(this.props.allCampaigns){
+      console.log({allCampaigns: this.props.allCampaigns})
+    }
     const tickButtonStyle = {
       position: "Absolute",
       marginLeft: "-10px"
@@ -93,10 +100,11 @@ class CardExampleExpandable extends Component{
     }
     return(
       <div>
-        {jobs.map((job) => {
-          let title = job.title
-          if(title.length > 20){
-            title = title.substring(0, 20) + "..."
+        {this.props.allCampaigns && this.props.allCampaigns.map((campaign) => {
+          console.log(campaign)
+          let campaign_name = campaign.campaign_name
+          if(campaign_name.length > 20){
+            campaign_name = campaign_name.substring(0, 20) + "..."
           }
           return(
             <div>
@@ -104,43 +112,43 @@ class CardExampleExpandable extends Component{
               <FieldArray 
                 name="jobsSelected" 
                 component={CheckboxComponent}
-                jobSelected={job.id}
+                jobSelected={campaign.id}
                 countBoxesTicked={this.countBoxesTicked}
                 boxesTicked={this.state.boxesTicked}
               />
             </div>
             <Card style={cardStyle}>
               <CardHeader
-                title={title}
+                title={campaign_name}
                 actAsExpander={true}
                 showExpandableButton={true}
               />
               <CardText expandable={true} style={{paddingBottom: "1px", paddingTop: "1px"}}>
               <div style={{borderTop: "1px solid #DCDCDC", paddingTop: "10px"}}>
                 <div style={{maxWidth: "500px", margin: "0 auto", textAlign: "left"}}>
-                  <div>Job Title:</div>
-                  <div>{job.title}</div>
+                  <div>Campaign name:</div>
+                  <div>{campaign.campaign_name}</div>
                   <br />
                   <div>Sector:</div>
-                  <div>{job.sector}</div>
+                  <div>{campaign.sector}</div>
                   <br />
                   <div>Position:</div>
-                  <div>{job.position}</div>
+                  <div>{campaign.position}</div>
                   <br />
-                  <div>Job Description:</div>
-                  <div>{job.description}</div>
+                  <div>campaign Description:</div>
+                  <div>{campaign.description}</div>
                   <br />
                   <div>Terms:</div>
-                  <div>{job.terms}</div>
+                  <div>{campaign.terms}</div>
                   <br />
                   <div>Work Postcode:</div>
-                  <div>{job.work_postalcode}</div>
+                  <div>{campaign.work_postalcode}</div>
                   <br />
                   <div>Salary:</div>
-                  <div>{job.salary}</div>
+                  <div>{campaign.salary}</div>
                   <br />
                   <div>Start Date:</div>
-                  <div>{job.start_date}</div>
+                  <div>{campaign.start_date}</div>
                 </div>
               </div>
             </CardText>
@@ -153,8 +161,17 @@ class CardExampleExpandable extends Component{
   }
 }
 
+
+function mapStateToProps(state) {
+  return {
+    allCampaigns: state.jobseeker.allCampaigns,
+  };
+}
+
 export default reduxForm({
   form: 'wizard',  // <------ same form name
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-})(CardExampleExpandable)
+})(
+  connect(mapStateToProps, { fetchAllCampaigns })(CardExampleExpandable)
+)
