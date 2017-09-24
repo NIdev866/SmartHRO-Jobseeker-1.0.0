@@ -8,6 +8,7 @@
   "dependencies": {
     "axios": "0.16.2",
     "babel-preset-stage-1": "6.24.1",
+    "device-detect": "^1.0.7",
     "dotenv": "4.0.0",
     "json-fs-store": "1.0.1",
     "lodash": "4.17.4",

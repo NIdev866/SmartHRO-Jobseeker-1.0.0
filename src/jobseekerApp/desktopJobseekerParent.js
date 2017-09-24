@@ -16,6 +16,8 @@ import { config } from "dotenv"
 import JobCards from "./jobCards"
 import MapPageWrapper from "./forms/mapPageWrapper"
 
+import MapComponent from "./mapComponent"
+
 config()
 class JobseekerParent extends Component {
   constructor(props) {
@@ -69,25 +71,36 @@ class JobseekerParent extends Component {
     const { onSubmit } = this.props
     const { page } = this.state
     return (
-      <Grid className='form-container'>
-        <Row center="xs">
-          <Col xs={13} sm={12} md={2} lg={8}>
+      <div>
             {page === 1 && 
-              <div style={{marginBottom: "20px"}}>
-                <h2>PLEASE APPLY FOR THIS JOB BY REGISTERING WITH US.</h2>
-                <h3>Select maximum 3 job boxes to apply for them.<br/>
-                    Click on the job to read more about it</h3>
-                <JobCards 
-                  allCampaigns={this.props.allCampaigns}
-                />
+
+
+              <div>
+                <div style={{float: "left", width: "60%", position: "fixed", height: "100vh"}}>
+                  <MapComponent 
+                    zoom={10}
+                    center={{ lat: 51.537452, lng: -0.497681}}
+                    containerElement={<div style={{height: 100+"%"}} />}
+                    mapElement={<div style={{height: 100+"%"}} />}
+                  />
+                </div>
+                <div style={{width: "40%", float: "right"}}>
+                  <div style={{marginBottom: "90px", paddingLeft: "10px", paddingRight: "10px", borderLeft: "1px solid grey", marginTop: "-20px"}}>
+                    <h2>PLEASE APPLY FOR JOBS BY REGISTERING WITH US.</h2>
+                    <h3>Select maximum 3 job boxes to apply for them.<br/>
+                        Click on the job to read more about it</h3>
+                    <JobCards 
+                      allCampaigns={this.props.allCampaigns}
+                    />
+                  </div>
+                </div>
               </div>
+
             }
             {page > 1 && 
               <TopCounter 
                 finishedStep={this.state.page}
               />}
-          </Col>
-        </Row>
         <Row center="xs">
           <Col xs={12} sm={12} md={2} lg={8}>
             {page === 1 && <div style={footerStyle}>
@@ -147,7 +160,7 @@ class JobseekerParent extends Component {
             </Animation>
           </Col>
         </Row>
-      </Grid>
+      </div>
     )
   }
 }

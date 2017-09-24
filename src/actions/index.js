@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { 
+  COMPANIES,
   ALL_CAMPAIGNS
 } from './types.js';
 
@@ -24,6 +25,17 @@ export function fetchAllCampaigns(){
   }
 }
 
+export function fetchCompanies(){
+  return function(dispatch){
+    axios.get(`${ROOT_URL}/admin/companies`)
+      .then(response => {
+        dispatch({ type: COMPANIES, payload: response.data });
+      })
+      .catch((err)=>{
+        console.log(err)
 
+      })
+  }
+}
 
 

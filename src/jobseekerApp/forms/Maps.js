@@ -2,7 +2,6 @@ import React, { Component } from "react"
 import { withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-google-maps"
 import _ from "lodash"
 import { connect } from "react-redux"
-import jobsDb from "../../jobs.json"
 
 class MapComponent extends Component {
   render(){
