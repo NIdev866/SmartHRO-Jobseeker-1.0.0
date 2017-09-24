@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+/*import React, { Component } from "react"
 import Maps from "./Maps"
 import { Field, reduxForm } from 'redux-form'
 import validate from './validate'
@@ -150,3 +150,4 @@ export default reduxForm({
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   validate
 })(MapParent)
+*/

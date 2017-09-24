@@ -86,9 +86,18 @@ class CardExampleExpandable extends Component{
       this.setState({boxesTicked: this.state.boxesTicked-1})
     }
   }
-  currentCompanyNameFromcompany_id(company_id){ 
+
+
+
+
+  currentCompanyNameFromcompany_id(company_id){
+
+    //console.log({currentCompanyNameFromcompany_id: this.props.companies.filter(el=>el.company_id === company_id)[0].company_name})
+
     return this.props.companies.filter(el=>el.company_id === company_id)[0].company_name
   }
+
+
   currentCampaignSalaryType(salary_type, salary){
     switch(salary_type){
       case "PER_ANNUM":
@@ -117,13 +126,22 @@ class CardExampleExpandable extends Component{
     const cardStyle = {
       marginTop: "20px",
     }
+
+
+
+    let correctCompanyStateForMapping = []
+
+    if(this.props.companiesWithDurations){
+      correctCompanyStateForMapping = this.props.companiesWithDurations
+    }
+    else{
+      correctCompanyStateForMapping = this.props.companies
+    }
+
+
     return(
       <div>
-        {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign) => {
-          let campaign_name = campaign.campaign_name
-          if(campaign_name.length > 20){
-            campaign_name = campaign_name.substring(0, 20) + "..."
-          }
+        {this.props.allCampaigns && correctCompanyStateForMapping && this.props.allCampaigns.map((campaign) => {
           return(
             <div>
             <div style={tickButtonStyle}>
@@ -143,17 +161,19 @@ class CardExampleExpandable extends Component{
 
 
               <CardHeader
-                style={{height: "120px", textAlign: "left"}}
+                style={{height: "160px", textAlign: "left"}}
                 actAsExpander={true}
                 showExpandableButton={true}
                 iconStyle={{position: "relative", left: "12px"}}
               >
-                <p style={{fontSize: "18px", margin: "-10px", marginTop: "-30px", padding: "0"}}><b>{campaign_name}</b></p>
+                <p style={{fontSize: "18px", margin: "-10px", marginTop: "-30px", padding: "0"}}><b>{campaign.campaign_name}</b></p>
                 <p style={{fontSize: "17px", margin: "-10px", marginTop: "10px", padding: "0"}}>{this.currentCompanyNameFromcompany_id(campaign.company_id)}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.location ? campaign.location : "location"}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.job_type ? campaign.job_type : "job type"}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.salary_type ? this.currentCampaignSalaryType(campaign.salary_type, campaign.salary) : "£ ... 'per month'etc"}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.job_start_date ? `Starting on ${campaign.job_start_date}` : "Starting on 13/07/2017"}</p>
+              
+                <p style={{fontSize: "15px", margin: "-10px", marginTop: "26px", padding: "0", color: "grey"}}>Distance: {this.props.companiesWithDurations ? this.props.companiesWithDurations.filter(el=>el.company_id === campaign.company_id)[0].duration + " away" : "  ___________"}</p>
               </CardHeader>
 
 
@@ -181,6 +201,7 @@ class CardExampleExpandable extends Component{
 function mapStateToProps(state) {
   return {
     companies: state.jobseeker.companies,
+    companiesWithDurations: state.jobseeker.companiesWithDurations,
     allCampaigns: state.jobseeker.allCampaigns,
   };
 }

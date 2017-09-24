@@ -17,7 +17,7 @@ import MapPageWrapper from "./forms/mapPageWrapper"
 
 
 
-import TEMPORARYmobileJobCards from "./TEMPORARYmobileJobCards"
+import MobileJobCards from "./mobileJobCards"
 
 
 config()
@@ -95,7 +95,7 @@ class JobseekerParent extends Component {
           <h2>PLEASE APPLY FOR THIS JOB BY REGISTERING WITH US.</h2>
           <h3>Select maximum 3 job boxes to apply for them.<br/>
               Click on the job to read more about it</h3>
-          <TEMPORARYmobileJobCards />
+          <MobileJobCards />
         </div>
 
         <div style={footerStyle}>

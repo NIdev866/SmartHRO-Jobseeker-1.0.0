@@ -13,18 +13,46 @@ import styles from './forms/form_material_styles'
 import TopCounter from "./topCounter"
 import Animation from 'react-addons-css-transition-group'
 import { config } from "dotenv"
-import JobCards from "./jobCards"
+import DesktopJobCards from "./desktopJobCards"
 import MapPageWrapper from "./forms/mapPageWrapper"
+import { connect } from 'react-redux'
+import { fetchCompanies, addDurationToCompanies } from '../actions'
+import { Marker, GoogleMap, DirectionsRenderer } from "react-google-maps"
 
-import MapComponent from "./mapComponent"
+import DesktopMapComponent from "./desktopMapComponent"
+import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
 
 config()
+const google = window.google
+
+
+
+
+
+
+
+
+
+
+
+
+
 class JobseekerParent extends Component {
   constructor(props) {
     super(props)
     this.nextPage = this.nextPage.bind(this)
     this.previousPage = this.previousPage.bind(this)
     this.updateUserMarker = this.updateUserMarker.bind(this)
+    this.createMarkersForCompanies = this.createMarkersForCompanies.bind(this)
+    this.autocompleteOnChange = this.autocompleteOnChange.bind(this)
+    this.handleSelect = this.handleSelect.bind(this)
+    this.renderGeocodeFailure = this.renderGeocodeFailure.bind(this)
+    this.renderGeocodeSuccess = this.renderGeocodeSuccess.bind(this)
+    this.handleUpdatingMarker = this.handleUpdatingMarker.bind(this)
+    this.createRoutes = this.createRoutes.bind(this)
+    this.setRoutes = this.setRoutes.bind(this)
+    this.createDurations = this.createDurations.bind(this)
+    this.setDurations = this.setDurations.bind(this)
     this.state = {
       slide: "toLeft",
       page: 1,
@@ -33,7 +61,10 @@ class JobseekerParent extends Component {
           lat: 0,
           lng: 0
         }
-      }
+      },
+      address: "",
+      geocodeResults: null,
+      loading: false
     }
   }
   nextPage() {
@@ -53,6 +84,178 @@ class JobseekerParent extends Component {
       userMarker: newMarker
     })
   }
+  createMarkersForCompanies(companies){
+    let mappedMarkers = []
+    mappedMarkers = this.props.companies.map((companyLatAndLng) => {
+      let marker = {
+        position: {
+          lat: companyLatAndLng.lat,
+          lng: companyLatAndLng.lng
+        }
+      }
+      return (
+        <Marker 
+          {...marker} 
+        />
+      )
+    })
+    return mappedMarkers
+  }
+
+  componentWillMount(){
+    this.props.fetchCompanies()
+  }
+
+
+
+
+
+
+
+
+
+  autocompleteOnChange(address){
+    this.setState({ address })
+  }
+  handleSelect(address) {
+    this.setState({
+      address,
+      loading: true
+    })
+    geocodeByAddress(address)
+      .then((results) => getLatLng(results[0]))
+      .then(({ lat, lng }) => {
+
+        this.setState({
+          geocodeResults: this.renderGeocodeSuccess(lat, lng),
+          loading: false
+        })
+
+        this.handleUpdatingMarker(lat, lng)
+      })
+      .catch((error) => {
+        console.log('Oh no!', error)
+        this.setState({
+          geocodeResults: this.renderGeocodeFailure(error),
+          loading: false
+        })
+
+        this.handleUpdatingMarker(0, 0)
+      })
+  }
+
+  handleUpdatingMarker(lat, lng){
+    let newMarker = {
+      position: {
+        lat, lng
+      }
+    }
+    this.updateUserMarker(newMarker)
+    this.createRoutes()
+    this.createDurations()
+  }
+
+
+  renderGeocodeSuccess(lat, lng) {}
+  renderGeocodeFailure(err) {
+    return (
+      <div 
+        className="alert alert-danger" 
+        role="alert"
+        style={{backgroundColor: "white"}}
+      >
+        Not found.
+      </div>
+    )
+  }
+
+
+  createRoutes(){      
+    for(let i = 0; i < this.props.companies.length; i++){
+      let routesArray = []
+      let lengthToMap = this.props.companies.length
+      let routesMappedAlready = 0
+      this.props.companies.map((venue, i) => {
+
+        const RoutesService = new google.maps.DirectionsService();
+        RoutesService.route({
+          origin: this.state.userMarker.position,
+          destination: {lat: venue.lat, lng: venue.lng},
+          travelMode: google.maps.TravelMode.DRIVING,
+        }, (result, status) => { 
+          if(this.state.userMarker.position.lat !== 0){
+            routesArray.push(result)
+          }
+          routesMappedAlready++
+          if(routesMappedAlready === lengthToMap){
+            this.setRoutes(routesArray)
+          }
+        })
+      })
+    }
+  }
+  setRoutes(routesArray){
+    if(routesArray.length >= 1){
+      this.setState({
+        routes: routesArray,
+      })
+    }
+  }
+
+
+
+
+
+
+
+
+  createDurations(){
+    let allCompaniesWithDurations = this.props.companies.map((company)=>{
+
+
+
+
+
+      let DurationService = new google.maps.DistanceMatrixService();
+      DurationService.getDistanceMatrix({
+          origins: [this.state.userMarker.position],
+          destinations: [company],
+          travelMode: 'DRIVING',
+          avoidHighways: false,
+          avoidTolls: false,
+        }, (result, status) => { 
+
+          company.duration = result.rows[0].elements[0].duration.text
+      })
+
+
+
+
+      return company
+    })
+
+    this.props.addDurationToCompanies(allCompaniesWithDurations)
+
+
+
+
+  }
+  setDurations(durationsArray){
+    if(durationsArray.length >= 1){
+      this.setState({
+        durations: durationsArray,
+      })
+    }
+  }
+
+
+
+
+
+
+
+
+
   render() {
     const footerStyle = {
       textAlign: "center",
@@ -68,35 +271,109 @@ class JobseekerParent extends Component {
       zIndex: "8000",
       overflow: "hidden"
     }
+
+
+
+
+
+    const styleObj = {
+      input: { padding: "6px", width: "280px"},
+      autocompleteContainer: { 
+      zIndex: "99999", width: "100%"},
+      autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
+      autocompleteItemActive: { color: '#00BCD4' },
+      googleLogoImage: { width: "10px"}
+    }
+    const inputStyling = {
+      position: "fixed", 
+      top: "4", 
+      marginLeft: "4"
+    }
+    const inputProps = {
+      value: this.state.address,
+      onChange: this.autocompleteOnChange,
+      placeholder: 'Your rough location to see distance (Optional)',
+      autoFocus: true,
+    }
+
+
+
+
+
+
     const { onSubmit } = this.props
     const { page } = this.state
     return (
       <div>
             {page === 1 && 
-
-
               <div>
                 <div style={{float: "left", width: "60%", position: "fixed", height: "100vh"}}>
-                  <MapComponent 
+                  
+
+
+
+
+
+
+                {this.props.companies &&
+                  <DesktopMapComponent 
                     zoom={10}
                     center={{ lat: 51.537452, lng: -0.497681}}
                     containerElement={<div style={{height: 100+"%"}} />}
                     mapElement={<div style={{height: 100+"%"}} />}
+                    mappedMarkers={this.props.companies && this.createMarkersForCompanies(this.props.companies)}
+                    companies={this.props.companies}
+                    routes={this.state.routes}
                   />
+                }
+
                 </div>
+
+                <div style={inputStyling}>
+                  <PlacesAutocomplete 
+                    onSelect={this.handleSelect}
+                    styles={styleObj} 
+                    inputProps={inputProps} 
+                    onEnterKeyDown={this.handleSelect}
+                  />
+                  {this.state.loading ? <div style={{backgroundColor: "white"}}>Loading...</div> : null}
+                  {!this.state.loading && this.state.geocodeResults ?
+                        <div className='geocoding-results'>{this.state.geocodeResults}</div> :
+                      null}
+                </div>
+
                 <div style={{width: "40%", float: "right"}}>
                   <div style={{marginBottom: "90px", paddingLeft: "10px", paddingRight: "10px", borderLeft: "1px solid grey", marginTop: "-20px"}}>
                     <h2>PLEASE APPLY FOR JOBS BY REGISTERING WITH US.</h2>
                     <h3>Select maximum 3 job boxes to apply for them.<br/>
                         Click on the job to read more about it</h3>
-                    <JobCards 
+                    <DesktopJobCards 
                       allCampaigns={this.props.allCampaigns}
                     />
                   </div>
                 </div>
               </div>
-
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             {page > 1 && 
               <TopCounter 
                 finishedStep={this.state.page}
@@ -170,4 +447,12 @@ JobseekerParent.propTypes = {
 }
 
 
-export default JobseekerParent
+
+function mapStateToProps(state) {
+  return {
+    companies: state.jobseeker.companies,
+    companiesWithDurations: state.jobseeker.companiesWithDurations
+  };
+}
+
+export default connect(mapStateToProps, { fetchCompanies, addDurationToCompanies })(JobseekerParent)

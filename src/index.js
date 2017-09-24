@@ -34,7 +34,7 @@ ReactDOM.render(
           <Route path="/" component={
             deviceDetect.device == "Windows" || 
             deviceDetect.device == "Macintosh" ||
-            deviceDetect.device == "Linux" ? /*DesktopJobseekerParent*/MobileJobseekerParent : MobileJobseekerParent} />
+            deviceDetect.device == "Linux" ? DesktopJobseekerParent : MobileJobseekerParent} />
         </div>
       </BrowserRouter>
     </MuiThemeProvider>
