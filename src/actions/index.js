@@ -4,7 +4,7 @@ import axios from 'axios';
 import { 
   COMPANIES,
   ALL_CAMPAIGNS,
-  ADD_DURATION_TO_COMPANIES
+  ADD_DURATION_TO_CAMPAIGNS
 } from './types.js';
 
 
@@ -36,12 +36,5 @@ export function fetchCompanies(){
         console.log(err)
 
       })
-  }
-}
-
-export function addDurationToCompanies(companiesWithDurations){
-  return { 
-    type: ADD_DURATION_TO_COMPANIES, 
-    payload: companiesWithDurations
   }
 }

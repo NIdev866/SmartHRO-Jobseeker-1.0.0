@@ -16,7 +16,7 @@ import { config } from "dotenv"
 import DesktopJobCards from "./desktopJobCards"
 import MapPageWrapper from "./forms/mapPageWrapper"
 import { connect } from 'react-redux'
-import { fetchCompanies, addDurationToCompanies } from '../actions'
+import { fetchCompanies } from '../actions'
 import { Marker, GoogleMap, DirectionsRenderer } from "react-google-maps"
 
 import DesktopMapComponent from "./desktopMapComponent"
@@ -51,8 +51,6 @@ class JobseekerParent extends Component {
     this.handleUpdatingMarker = this.handleUpdatingMarker.bind(this)
     this.createRoutes = this.createRoutes.bind(this)
     this.setRoutes = this.setRoutes.bind(this)
-    this.createDurations = this.createDurations.bind(this)
-    this.setDurations = this.setDurations.bind(this)
     this.state = {
       slide: "toLeft",
       page: 1,
@@ -152,7 +150,6 @@ class JobseekerParent extends Component {
     }
     this.updateUserMarker(newMarker)
     this.createRoutes()
-    this.createDurations()
   }
 
 
@@ -201,60 +198,6 @@ class JobseekerParent extends Component {
       })
     }
   }
-
-
-
-
-
-
-
-
-  createDurations(){
-    let allCompaniesWithDurations = this.props.companies.map((company)=>{
-
-
-
-
-
-      let DurationService = new google.maps.DistanceMatrixService();
-      DurationService.getDistanceMatrix({
-          origins: [this.state.userMarker.position],
-          destinations: [company],
-          travelMode: 'DRIVING',
-          avoidHighways: false,
-          avoidTolls: false,
-        }, (result, status) => { 
-
-          company.duration = result.rows[0].elements[0].duration.text
-      })
-
-
-
-
-      return company
-    })
-
-    this.props.addDurationToCompanies(allCompaniesWithDurations)
-
-
-
-
-  }
-  setDurations(durationsArray){
-    if(durationsArray.length >= 1){
-      this.setState({
-        durations: durationsArray,
-      })
-    }
-  }
-
-
-
-
-
-
-
-
 
   render() {
     const footerStyle = {
@@ -349,6 +292,7 @@ class JobseekerParent extends Component {
                         Click on the job to read more about it</h3>
                     <DesktopJobCards 
                       allCampaigns={this.props.allCampaigns}
+                      userMarker={this.state.userMarker}
                     />
                   </div>
                 </div>
@@ -450,9 +394,8 @@ JobseekerParent.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    companies: state.jobseeker.companies,
-    companiesWithDurations: state.jobseeker.companiesWithDurations
+    companies: state.jobseeker.companies
   };
 }
 
-export default connect(mapStateToProps, { fetchCompanies, addDurationToCompanies })(JobseekerParent)
+export default connect(mapStateToProps, { fetchCompanies })(JobseekerParent)

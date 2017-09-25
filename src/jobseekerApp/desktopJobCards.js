@@ -7,6 +7,9 @@ import { connect } from "react-redux"
 import { getFormValues } from 'redux-form'
 import { fetchCompanies, fetchAllCampaigns } from '../actions'
 
+
+const google = window.google
+
 class CheckboxComponent extends Component{
   constructor(props){
     super(props)
@@ -68,15 +71,29 @@ CheckboxComponent = connect(
   }
 )(CheckboxComponent)
 
+
+
+
+
+
+
+
+
+
+
+
+
 class CardExampleExpandable extends Component{
   constructor(props){
     super(props)
     this.state = {
       boxesTicked: 0,
+      duration: " ___________"
     }
     this.countBoxesTicked = this.countBoxesTicked.bind(this)
     this.currentCompanyNameFromcompany_id = this.currentCompanyNameFromcompany_id.bind(this)
     this.currentCampaignSalaryType = this.currentCampaignSalaryType.bind(this)
+    this.createDuration = this.createDuration.bind(this)
   }
   countBoxesTicked(value){
     if(value){
@@ -118,6 +135,54 @@ class CardExampleExpandable extends Component{
     this.props.fetchCompanies()
     this.props.fetchAllCampaigns()
   }
+
+
+
+
+
+
+
+
+  createDuration(campaignLat, campaignLng, campaign){
+              let resultDuration
+
+          let DurationService = new google.maps.DistanceMatrixService();
+          DurationService.getDistanceMatrix({
+              origins: [this.props.userMarker.position],
+              destinations: [{lat: campaignLat, lng: campaignLng}],
+              travelMode: 'DRIVING',
+              avoidHighways: false,
+              avoidTolls: false,
+            }, (result, status) => { 
+
+              if(result.rows[0].elements[0].duration){
+
+                resultDuration = result.rows[0].elements[0].duration.text
+
+
+                if(this.state.duration !== resultDuration)
+                this.setState({    // prevState?
+                  duration: resultDuration
+                })
+
+              }
+          })
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   render(){
 
     const tickButtonStyle = {
@@ -129,19 +194,31 @@ class CardExampleExpandable extends Component{
 
 
 
-    let correctCompanyStateForMapping = []
-
-    if(this.props.companiesWithDurations){
-      correctCompanyStateForMapping = this.props.companiesWithDurations
-    }
-    else{
-      correctCompanyStateForMapping = this.props.companies
-    }
-
-
     return(
       <div>
-        {this.props.allCampaigns && correctCompanyStateForMapping && this.props.allCampaigns.map((campaign) => {
+        {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign) => {
+          
+
+
+
+          let campaignLat = this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].lat
+          let campaignLng = this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].lng
+
+
+
+
+
+          this.createDuration(campaignLat, campaignLng, campaign)
+
+
+
+
+
+
+
+
+
+
           return(
             <div>
             <div style={tickButtonStyle}>
@@ -173,7 +250,11 @@ class CardExampleExpandable extends Component{
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.salary_type ? this.currentCampaignSalaryType(campaign.salary_type, campaign.salary) : "£ ... 'per month'etc"}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.job_start_date ? `Starting on ${campaign.job_start_date}` : "Starting on 13/07/2017"}</p>
               
-                <p style={{fontSize: "15px", margin: "-10px", marginTop: "26px", padding: "0", color: "grey"}}>Distance: {this.props.companiesWithDurations ? this.props.companiesWithDurations.filter(el=>el.company_id === campaign.company_id)[0].duration + " away" : "  ___________"}</p>
+<p style={{fontSize: "15px", margin: "-10px",
+ marginTop: "26px", padding: "0", 
+
+ color: "grey"}}>Distance: {this.state.duration !== " ___________" ? this.state.duration + " away" : this.state.duration}</p>
+              
               </CardHeader>
 
 
@@ -201,7 +282,6 @@ class CardExampleExpandable extends Component{
 function mapStateToProps(state) {
   return {
     companies: state.jobseeker.companies,
-    companiesWithDurations: state.jobseeker.companiesWithDurations,
     allCampaigns: state.jobseeker.allCampaigns,
   };
 }

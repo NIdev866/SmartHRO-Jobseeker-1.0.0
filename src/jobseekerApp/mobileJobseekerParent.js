@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+/*import React, { Component, PropTypes } from 'react'
 import FormFirstPage from './forms/form_1'
 import FormSecondPage from './forms/form_2'
 import FormThirdPage from './forms/form_3'
@@ -391,4 +391,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { fetchCompanies, addDurationToCompanies })(JobseekerParent)
+export default connect(mapStateToProps, { fetchCompanies, addDurationToCompanies })(JobseekerParent)*/
