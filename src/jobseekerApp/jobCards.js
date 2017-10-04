@@ -88,10 +88,8 @@ class CardExampleExpandable extends Component{
     super(props)
     this.state = {
       boxesTicked: 0,
-      duration: " ___________"
     }
     this.countBoxesTicked = this.countBoxesTicked.bind(this)
-    this.currentCompanyNameFromcompany_id = this.currentCompanyNameFromcompany_id.bind(this)
     this.currentCampaignSalaryType = this.currentCampaignSalaryType.bind(this)
     this.createDuration = this.createDuration.bind(this)
   }
@@ -103,17 +101,6 @@ class CardExampleExpandable extends Component{
       this.setState({boxesTicked: this.state.boxesTicked-1})
     }
   }
-
-
-
-
-  currentCompanyNameFromcompany_id(company_id){
-
-    //console.log({currentCompanyNameFromcompany_id: this.props.companies.filter(el=>el.company_id === company_id)[0].company_name})
-
-    return this.props.companies.filter(el=>el.company_id === company_id)[0].company_name
-  }
-
 
   currentCampaignSalaryType(salary_type, salary){
     switch(salary_type){
@@ -131,19 +118,12 @@ class CardExampleExpandable extends Component{
   }
 
 
-  componentWillMount(){
-    this.props.fetchCompanies()
-    this.props.fetchAllCampaigns()
-  }
 
 
 
 
 
-
-
-
-  createDuration(campaignLat, campaignLng, campaign){
+  createDuration(campaignLat, campaignLng, i){
               let resultDuration
 
           let DurationService = new google.maps.DistanceMatrixService();
@@ -155,14 +135,23 @@ class CardExampleExpandable extends Component{
               avoidTolls: false,
             }, (result, status) => { 
 
-              if(result.rows[0].elements[0].duration){
+              if(result.rows[0].elements[0].status == "ZERO_RESULTS"){
+                if(this.state[`duration${i}`] && this.state[`duration${i}`] !== " ___________"){
+                  return this.setState({    // prevState?
+                    [`duration${i}`]: " ___________"
+                  })
+                }
+              }
+              console.log(result)
+
+              if(result && result.rows[0].elements[0].duration){
 
                 resultDuration = result.rows[0].elements[0].duration.text
 
 
-                if(this.state.duration !== resultDuration)
+                if(this.state[`duration${i}`] !== resultDuration)
                 this.setState({    // prevState?
-                  duration: resultDuration
+                  [`duration${i}`]: resultDuration
                 })
 
               }
@@ -196,21 +185,12 @@ class CardExampleExpandable extends Component{
 
     return(
       <div>
-        {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign) => {
+        {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign, i) => {
           
 
 
 
-          let campaignLat = this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].lat
-          let campaignLng = this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].lng
-
-
-
-
-
-          this.createDuration(campaignLat, campaignLng, campaign)
-
-
+          this.createDuration(parseFloat(campaign.lat), parseFloat(campaign.lng), i)
 
 
 
@@ -244,7 +224,7 @@ class CardExampleExpandable extends Component{
                 iconStyle={{position: "relative", left: "12px"}}
               >
                 <p style={{fontSize: "18px", margin: "-10px", marginTop: "-30px", padding: "0"}}><b>{campaign.campaign_name}</b></p>
-                <p style={{fontSize: "17px", margin: "-10px", marginTop: "10px", padding: "0"}}>{this.currentCompanyNameFromcompany_id(campaign.company_id)}</p>
+                <p style={{fontSize: "17px", margin: "-10px", marginTop: "10px", padding: "0"}}>{this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].company_name}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.location ? campaign.location : "location"}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.job_type ? campaign.job_type : "job type"}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.salary_type ? this.currentCampaignSalaryType(campaign.salary_type, campaign.salary) : "£ ... 'per month'etc"}</p>
@@ -253,7 +233,7 @@ class CardExampleExpandable extends Component{
 <p style={{fontSize: "15px", margin: "-10px",
  marginTop: "26px", padding: "0", 
 
- color: "grey"}}>Distance: {this.state.duration !== " ___________" ? this.state.duration + " away" : this.state.duration}</p>
+ color: "grey"}}>Distance: {console.log(this.state[`duration${i}`]) && this.state[`duration${i}`] !== " ___________" ? this.state[`duration${i}`] + " away" : this.state[`duration${i}`]}</p>
               
               </CardHeader>
 

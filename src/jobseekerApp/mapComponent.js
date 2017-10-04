@@ -4,13 +4,14 @@ import _ from "lodash"
 
 class MapComponent extends Component {
   render(){
+
     let mappedMarkers = []
     if(!this.props.routes){
-      mappedMarkers = this.props.companies.map((venue, i) => {
+      mappedMarkers = this.props.allCampaigns.map((venue, i) => {
         let marker = {
           position: {
-            lat: venue.lat,
-            lng: venue.lng
+            lat: parseFloat(venue.lat),
+            lng: parseFloat(venue.lng)
           }
         }
         return (
@@ -35,7 +36,7 @@ class MapComponent extends Component {
         onMarkerClick={_.noop}
         options={{streetViewControl: false, mapTypeControl: false, zoomControl: false, fullscreenControl: false}}>
         {mappedRoutes}        
-        {this.props.companies && mappedMarkers}
+        {this.props.allCampaigns && mappedMarkers}
       </GoogleMap>
     )
   }

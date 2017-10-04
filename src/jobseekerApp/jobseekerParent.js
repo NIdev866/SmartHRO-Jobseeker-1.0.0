@@ -13,14 +13,16 @@ import styles from './forms/form_material_styles'
 import TopCounter from "./topCounter"
 import Animation from 'react-addons-css-transition-group'
 import { config } from "dotenv"
-import DesktopJobCards from "./desktopJobCards"
-import MapPageWrapper from "./forms/mapPageWrapper"
 import { connect } from 'react-redux'
-import { fetchCompanies } from '../actions'
+import { fetchAllCampaigns, fetchCompanies } from '../actions'
 import { Marker, GoogleMap, DirectionsRenderer } from "react-google-maps"
 
-import DesktopMapComponent from "./desktopMapComponent"
+import MapComponent from "./mapComponent"
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
+
+import ReactResizeDetector from 'react-resize-detector';
+import JobCards from './jobCards'
+import SlideComponent from './slideComponent'
 
 config()
 const google = window.google
@@ -43,7 +45,6 @@ class JobseekerParent extends Component {
     this.nextPage = this.nextPage.bind(this)
     this.previousPage = this.previousPage.bind(this)
     this.updateUserMarker = this.updateUserMarker.bind(this)
-    this.createMarkersForCompanies = this.createMarkersForCompanies.bind(this)
     this.autocompleteOnChange = this.autocompleteOnChange.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
     this.renderGeocodeFailure = this.renderGeocodeFailure.bind(this)
@@ -51,6 +52,8 @@ class JobseekerParent extends Component {
     this.handleUpdatingMarker = this.handleUpdatingMarker.bind(this)
     this.createRoutes = this.createRoutes.bind(this)
     this.setRoutes = this.setRoutes.bind(this)
+    this._onResize = this._onResize.bind(this)
+    this.sliderClick = this.sliderClick.bind(this)
     this.state = {
       slide: "toLeft",
       page: 1,
@@ -62,8 +65,18 @@ class JobseekerParent extends Component {
       },
       address: "",
       geocodeResults: null,
-      loading: false
+      loading: false,
+      screenWidth: null,
+      slider: "closed"
     }
+  }
+  sliderClick(){
+    const { slider } = this.state
+    this.setState({slider: slider == "closed" ? "open" : "closed"})
+  }
+  _onResize(width) {
+    this.setState({screenWidth: width})
+
   }
   nextPage() {
     this.setState({ 
@@ -82,25 +95,9 @@ class JobseekerParent extends Component {
       userMarker: newMarker
     })
   }
-  createMarkersForCompanies(companies){
-    let mappedMarkers = []
-    mappedMarkers = this.props.companies.map((companyLatAndLng) => {
-      let marker = {
-        position: {
-          lat: companyLatAndLng.lat,
-          lng: companyLatAndLng.lng
-        }
-      }
-      return (
-        <Marker 
-          {...marker} 
-        />
-      )
-    })
-    return mappedMarkers
-  }
 
   componentWillMount(){
+    this.props.fetchAllCampaigns()    
     this.props.fetchCompanies()
   }
 
@@ -168,16 +165,16 @@ class JobseekerParent extends Component {
 
 
   createRoutes(){      
-    for(let i = 0; i < this.props.companies.length; i++){
+    for(let i = 0; i < this.props.allCampaigns.length; i++){
       let routesArray = []
-      let lengthToMap = this.props.companies.length
+      let lengthToMap = this.props.allCampaigns.length
       let routesMappedAlready = 0
-      this.props.companies.map((venue, i) => {
+      this.props.allCampaigns.map((venue, i) => {
 
         const RoutesService = new google.maps.DirectionsService();
         RoutesService.route({
           origin: this.state.userMarker.position,
-          destination: {lat: venue.lat, lng: venue.lng},
+          destination: {lat: parseFloat(venue.lat), lng: parseFloat(venue.lng)},
           travelMode: google.maps.TravelMode.DRIVING,
         }, (result, status) => { 
           if(this.state.userMarker.position.lat !== 0){
@@ -199,38 +196,134 @@ class JobseekerParent extends Component {
     }
   }
 
+
+
+
+
   render() {
-    const footerStyle = {
-      textAlign: "center",
-      position: "fixed",
-      left: "0",
-      bottom: "0",
-      paddingBottom: "2px",
-      minHeight: "40px",
-      width: "100%",
-      borderTop: "1px solid",
-      borderColor: "#DCDCDC",
-      backgroundColor: "white",
-      zIndex: "8000",
-      overflow: "hidden"
+    let footerStyle = {}
+    if(this.state.screenWidth > 700){
+      footerStyle = {
+        textAlign: "center",
+        position: "fixed",
+        left: "0",
+        bottom: "0",
+        paddingBottom: "2px",
+        minHeight: "40px",
+        width: "100%",
+        borderTop: "1px solid",
+        borderColor: "#DCDCDC",
+        backgroundColor: "white",
+        zIndex: "8000",
+        overflow: "hidden"
+      }
     }
+    else{
+      footerStyle = {}
+    }
+    let slideComponentStyle = {}
+    if(this.state.screenWidth > 700){
+      if(this.state.slider != "closed"){
+        this.setState({slider: 'closed'})
+      }
+      if(this.state.slider == "closed"){
+        slideComponentStyle = {
+          overflow: "hidden",
+          position: "absolute",
+          transition: "all .2s ease-in-out",
+          height: "100vh",
+          backgroundColor: "white",
+          borderTop: "1px solid #CCCCCC",
+          width: "40vw",
+          left: '60vw',
+          top: "0"
+        }
+      }
+    }
+    else{
+      if(this.state.slider == "closed"){
+        slideComponentStyle = {
+          overflow: "hidden",
+          position: "absolute",
+          transition: "all .2s ease-in-out",
+          height: "50px",
+          backgroundColor: "white",
+          borderTop: "1px solid #CCCCCC",
+          width: "100vw",
+          top: "calc(100vh - 51px)"
+        }
+      }
+      else{
+        slideComponentStyle = {
+          overflow: "hidden",
+          position: "absolute",
+          transition: "all .2s ease-in-out",
+          height: "100vh",
+          backgroundColor: "white",
+          width: "100vw",
+          top: "0px"
+        }
+      }
+    }
+    let openIconStyle = {}
+    if(this.state.slider == "closed"){
+      openIconStyle = {
+        transition: "all .4s ease-in-out",
+        width: "50px", 
+        marginLeft: "50%"
 
-
-
-
-
-    const styleObj = {
-      input: { padding: "6px", width: "280px"},
-      autocompleteContainer: { 
-      zIndex: "99999", width: "100%"},
-      autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
-      autocompleteItemActive: { color: '#00BCD4' },
-      googleLogoImage: { width: "10px"}
+      }
+    }
+    else{
+      openIconStyle = {
+        transition: "all .4s ease-in-out",
+        width: "50px", 
+        marginLeft: "50%",
+        transform: "rotate(180deg)"
+      }
+    }
+    let mapComponentStyle = {}
+    if(this.state.screenWidth > 700){
+      mapComponentStyle = {
+        float: "left", 
+        width: "60%", 
+        position: "fixed", 
+        height: "100vh"
+      }
+    }
+    else{
+      mapComponentStyle = {
+        float: "left", 
+        width: "100vh", 
+        position: "fixed", 
+        height: "100vh"
+      }
+    }
+    let styleObj
+    if(this.state.screenWidth > 700){
+      styleObj = {
+        input: { padding: "6px", width: "280px"},
+        autocompleteContainer: { 
+        zIndex: "99999", width: "100%"},
+        autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
+        autocompleteItemActive: { color: '#00BCD4' },
+        googleLogoImage: { width: "10px"}
+      }
+    }
+    else{
+      styleObj = {
+        input: { padding: "6px", width: "calc(100vw - 24px)"},
+        autocompleteContainer: { 
+        zIndex: "99999", width: "100%"},
+        autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
+        autocompleteItemActive: { color: '#00BCD4' },
+        googleLogoImage: { width: "10px"}
+      }      
     }
     const inputStyling = {
       position: "fixed", 
       top: "4", 
-      marginLeft: "4"
+      marginLeft: "4",
     }
     const inputProps = {
       value: this.state.address,
@@ -247,25 +340,18 @@ class JobseekerParent extends Component {
     const { onSubmit } = this.props
     const { page } = this.state
     return (
-      <div>
+      <div style={{position: "relative", width: "100vw", height: "100vh", overflow: "hidden"}}>
+        <ReactResizeDetector handleWidth handleHeight onResize={this._onResize} />
             {page === 1 && 
               <div>
-                <div style={{float: "left", width: "60%", position: "fixed", height: "100vh"}}>
-                  
-
-
-
-
-
-
-                {this.props.companies &&
-                  <DesktopMapComponent 
+                <div style={mapComponentStyle}>
+                {this.props.allCampaigns &&
+                  <MapComponent 
                     zoom={10}
                     center={{ lat: 51.537452, lng: -0.497681}}
                     containerElement={<div style={{height: 100+"%"}} />}
                     mapElement={<div style={{height: 100+"%"}} />}
-                    mappedMarkers={this.props.companies && this.createMarkersForCompanies(this.props.companies)}
-                    companies={this.props.companies}
+                    allCampaigns={this.props.allCampaigns}
                     routes={this.state.routes}
                   />
                 }
@@ -285,35 +371,20 @@ class JobseekerParent extends Component {
                       null}
                 </div>
 
-                <div style={{width: "40%", float: "right"}}>
-                  <div style={{marginBottom: "90px", paddingLeft: "10px", paddingRight: "10px", borderLeft: "1px solid grey", marginTop: "-20px"}}>
-                    <h2>PLEASE APPLY FOR JOBS BY REGISTERING WITH US.</h2>
-                    <h3>Select maximum 3 job boxes to apply for them.<br/>
-                        Click on the job to read more about it</h3>
-                    <DesktopJobCards 
-                      allCampaigns={this.props.allCampaigns}
-                      userMarker={this.state.userMarker}
-                    />
-                  </div>
+
+                <div style={slideComponentStyle}>
+                  <SlideComponent
+                    nextPage={this.nextPage}
+                    screenWidth={this.state.screenWidth}
+                    sliderClick={this.sliderClick}
+                    openIconStyle={openIconStyle}
+                    userMarker={this.state.userMarker}
+                   />
                 </div>
+
+
               </div>
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -324,11 +395,28 @@ class JobseekerParent extends Component {
               />}
         <Row center="xs">
           <Col xs={12} sm={12} md={2} lg={8}>
-            {page === 1 && <div style={footerStyle}>
+            {page === 1 && this.state.screenWidth > 700 && <div style={footerStyle}>
               <RaisedButton primary={true} 
               style={styles.raisedButtonStyle}
               label="APPLY"
-              onClick={this.nextPage}/></div>}
+              onClick={this.nextPage}/>
+            </div>}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               <Animation
                 transitionName={this.state.slide}
                 transitionEnterTimeout={500}
@@ -357,12 +445,7 @@ class JobseekerParent extends Component {
                     onSubmit={this.nextPage}
                   />}
                 {page === 6 &&
-                  <MapPageWrapper 
-                    previousPage={this.previousPage}
-                    onSubmit={this.nextPage}
-                    userMarker={this.state.userMarker}
-                    updateUserMarker={this.updateUserMarker}
-                  />}
+                  <div>{/*TAKE FROM THE OTHER PROJECT*/}</div>}
                 {page === 7 &&
                   <FormSixthPage 
                     previousPage={this.previousPage}
@@ -394,8 +477,8 @@ JobseekerParent.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    companies: state.jobseeker.companies
+    allCampaigns: state.jobseeker.allCampaigns,
   };
 }
 
-export default connect(mapStateToProps, { fetchCompanies })(JobseekerParent)
+export default connect(mapStateToProps, { fetchAllCampaigns, fetchCompanies })(JobseekerParent)

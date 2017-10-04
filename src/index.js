@@ -7,14 +7,11 @@ import { BrowserRouter, Route , Switch, Redirect } from 'react-router-dom';
 import promise from 'redux-promise';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import reducers from './reducers';
-import DesktopJobseekerParent from './jobseekerApp/desktopJobseekerParent';
-import MobileJobseekerParent from './jobseekerApp/mobileJobseekerParent';
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import reduxThunk from 'redux-thunk';
 
+import JobseekerParent from "./jobseekerApp/jobseekerParent"
 
-
-var deviceDetect = require('device-detect')();
 
 
 
@@ -31,10 +28,7 @@ ReactDOM.render(
     <MuiThemeProvider>
       <BrowserRouter>
         <div>
-          <Route path="/" component={
-            deviceDetect.device == "Windows" || 
-            deviceDetect.device == "Macintosh" ||
-            deviceDetect.device == "Linux" ? DesktopJobseekerParent : MobileJobseekerParent} />
+          <Route path="/" component={JobseekerParent} />
         </div>
       </BrowserRouter>
     </MuiThemeProvider>
