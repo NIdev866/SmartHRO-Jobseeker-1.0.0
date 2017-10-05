@@ -15,8 +15,10 @@ import Animation from 'react-addons-css-transition-group'
 import { config } from "dotenv"
 
 
-
 import JobCards from "./jobCards"
+
+import {setLanguage} from 'redux-i18n'
+import {connect} from 'react-redux'
 
 
 config()
@@ -42,7 +44,7 @@ class SlideElement extends Component {
           <div onClick={this.props.sliderClick} style={{height: '50px', borderBottom: "1px solid #CCCCCC"}}>
             <div style={{position: "relative", width: "400px", margin: "0 auto"}}>
               <div style={{color: "grey", lineHeight: "50px", position: "absolute", width: "80px",left: "120px"}}>
-                <b>ALL JOBS</b>
+                <b>{this.context.t('ALL JOBS')}</b>
               </div>
               <div style={this.props.openIconStyle}>
                 <div>
@@ -53,11 +55,11 @@ class SlideElement extends Component {
           </div>
         }
         <div style={{margin: "10px", marginTop: "0px", height: "calc(100vh - 50px)", overflow: "scroll"}}>
-          <h2>PLEASE APPLY FOR THIS JOB BY REGISTERING WITH US.</h2>
-          <h3>Select maximum 3 job boxes to apply for them.<br/>
-              Click on the job to read more about it</h3>
+          <h2>{this.context.t('PLEASE APPLY FOR JOBS BY REGISTERING WITH US.')}</h2>
+          <h3>{this.context.t('Select maximum 3 job boxes to apply for them.')}<br/>
+              {this.context.t('Click on the job to read more about it.')}</h3>
           <div style={{width: '100%', height: '450px'}}>
-            <JobCards userMarker={this.props.userMarker}/>
+            <JobCards userMarker={this.props.userMarker} screenWidth={this.props.screenWidth}/>
           </div>
         </div>
 
@@ -66,7 +68,7 @@ class SlideElement extends Component {
             <RaisedButton primary={true} 
             onClick={this.props.nextPage}
             style={{...styles.raisedButtonStyle, marginTop: "10px"}}
-            label="APPLY"/>
+            label={this.context.t("APPLY")} />
           </div>
         }
       </div>
@@ -74,4 +76,11 @@ class SlideElement extends Component {
   }
 }
 
-export default SlideElement
+
+SlideElement.contextTypes = {
+  t: PropTypes.func.isRequired
+}
+
+export default connect(state => ({
+    lang: state.i18nState.lang
+  }))(SlideElement)

@@ -1,20 +1,20 @@
 const validate = values => {
   const errors = {}
-  if (!values.firstName) {
+  if (!values.first_name) {
     errors.firstName = 'Required'
-  }else if(values.firstName.length > 12) {
+  }else if(values.first_name.length > 12) {
     errors.firstName = 'Input too long'
-  }else if(values.firstName.match(/[0-9]/g)){
-    errors.firstName = "Invalid first name"
+  }else if(values.first_name.match(/[0-9]/g)){
+    errors.firstName = "Invalid name - must not contain numbers"
   }
-  if (!values.lastName) {
+  if (!values.last_name) {
     errors.lastName = 'Required'
-  }else if(values.lastName.length > 12) {
+  }else if(values.last_name.length > 12) {
     errors.lastName = 'Input too long'
-  }else if(values.lastName.match(/[0-9]/g)){
-    errors.lastName = "Invalid last name"
+  }else if(values.last_name.match(/[0-9]/g)){
+    errors.lastName = "Invalid name - must not contain numbers"
   }
-  if (!values.ageRange) {
+  if (!values.age) {
     errors.ageRange = "Required"
   }
   if (!values.gender) {
@@ -23,22 +23,22 @@ const validate = values => {
   if(!values.nationality) {
     errors.nationality = "Required"
   }
-  if(!values.mobileNumber && !values.landlineNumber) {
-    errors.mobileNumber = "One valid number required"
-    errors.landlineNumber = "One valid number required"
+  if(!values.contact_no && !values.landline_no) {
+    errors.contact_no = "One valid number required"
+    errors.landline_no = "One valid number required"
   }
-  if (!(/^\d{10}$/.test(values.mobileNumber)) && values.mobileNumber){
-    errors.mobileNumber = "Invalid number"
-    errors.landlineNumber = ""
-  }else if (!(/^\d{10}$/.test(values.landlineNumber)) && values.landlineNumber){
-    errors.mobileNumber = ""
-    errors.landlineNumber = "Invalid number"
+  if (!(/^\d{11}$/.test(values.contact_no)) && values.contact_no){
+    errors.contact_no = "Invalid number"
+    errors.landline_no = ""
+  }else if (!(/^\d{11}$/.test(values.landline_no)) && values.landline_no){
+    errors.contact_no = ""
+    errors.landline_no = "Invalid number"
   }
-  if (!values.email) {
+  if (!values.email_id) {
     errors.email = 'Required'
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email_id)) {
     errors.email = 'Invalid email address'
-  }else if(values.email.length > 30) {
+  }else if(values.email_id.length > 30) {
     errors.email = 'Input too long'
   }
   if (!values.emailCopy) {
@@ -47,9 +47,9 @@ const validate = values => {
     errors.emailCopy = 'Invalid email address'
   }else if(values.emailCopy.length > 17) {
     errors.emailCopy = 'Input too long'
-  }else if (values.email !== values.emailCopy) {
+  }else if (values.email_id !== values.emailCopy) {
     errors.emailCopy = 'Emails don\'t match'
-  }else if(!values.email) {
+  }else if(!values.email_id) {
     errors.emailCopy = ''}
   if(errors.email === "Required" && errors.emailCopy === "Emails don\'t match"){
     errors.emailCopy = ""
@@ -57,14 +57,14 @@ const validate = values => {
   if(errors.email === "Invalid email address" && errors.emailCopy === "Emails don\'t match"){
     errors.emailCopy = ""
   }
-  if(!values.postcode){
-    errors.postcode = 'Required'
-  }else if(values.postcode.length > 12){
-    errors.postcode = 'Too long'
+  if(!values.postal_code){
+    errors.post_code = 'Required'
+  }else if(values.postal_code.length > 12){
+    errors.postal_code = 'Too long'
   }
-  if(!values.houseNumber){
+  if(!values.house_no){
     errors.houseNumber = 'Required'
-  }else if(values.houseNumber.length > 6){
+  }else if(values.house_no.length > 6){
     errors.houseNumber = 'Too long'
   }
   if (!values.student) {
@@ -79,7 +79,7 @@ const validate = values => {
   if (!values.willing_to_travel) {
     errors.willing_to_travel = 'Required'
   }
-  if (!values.when_can_start) {
+  if (!values.when_to_start_work) {
     errors.when_can_start = 'Required'
   }
   if (!values.CV) {

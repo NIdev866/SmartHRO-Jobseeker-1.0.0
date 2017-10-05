@@ -23,6 +23,7 @@ import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-au
 import ReactResizeDetector from 'react-resize-detector';
 import JobCards from './jobCards'
 import SlideComponent from './slideComponent'
+import {setLanguage} from 'redux-i18n'
 
 config()
 const google = window.google
@@ -69,6 +70,7 @@ class JobseekerParent extends Component {
       screenWidth: null,
       slider: "closed"
     }
+    this.languages = ['pl', 'en']
   }
   sliderClick(){
     const { slider } = this.state
@@ -99,9 +101,12 @@ class JobseekerParent extends Component {
   componentWillMount(){
     this.props.fetchAllCampaigns()    
     this.props.fetchCompanies()
+    this.props.dispatch(setLanguage('en'))
   }
 
-
+  onChangeLang = (e) => {
+    this.props.dispatch(setLanguage(e.target.value))
+  }
 
 
 
@@ -158,7 +163,7 @@ class JobseekerParent extends Component {
         role="alert"
         style={{backgroundColor: "white"}}
       >
-        Not found.
+        {this.context.t('Not found.')}
       </div>
     )
   }
@@ -302,7 +307,7 @@ class JobseekerParent extends Component {
     let styleObj
     if(this.state.screenWidth > 700){
       styleObj = {
-        input: { padding: "6px", width: "280px"},
+        input: { padding: "6px", width: "320px"},
         autocompleteContainer: { 
         zIndex: "99999", width: "100%"},
         autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
@@ -328,15 +333,9 @@ class JobseekerParent extends Component {
     const inputProps = {
       value: this.state.address,
       onChange: this.autocompleteOnChange,
-      placeholder: 'Your rough location to see distance (Optional)',
+      placeholder: this.context.t('Your rough location to see distance (Optional)') ,
       autoFocus: true,
     }
-
-
-
-
-
-
     const { onSubmit } = this.props
     const { page } = this.state
     return (
@@ -355,9 +354,7 @@ class JobseekerParent extends Component {
                     routes={this.state.routes}
                   />
                 }
-
                 </div>
-
                 <div style={inputStyling}>
                   <PlacesAutocomplete 
                     onSelect={this.handleSelect}
@@ -365,13 +362,16 @@ class JobseekerParent extends Component {
                     inputProps={inputProps} 
                     onEnterKeyDown={this.handleSelect}
                   />
-                  {this.state.loading ? <div style={{backgroundColor: "white"}}>Loading...</div> : null}
+                  {this.state.loading ? <div style={{backgroundColor: "white"}}>{this.context.t('Loading...')}</div> : null}
                   {!this.state.loading && this.state.geocodeResults ?
                         <div className='geocoding-results'>{this.state.geocodeResults}</div> :
                       null}
+                  <div style={{backgroundColor: 'red', zIndex: '999999'}}>
+                    <select value={this.props.lang} onChange={this.onChangeLang}>
+                      {this.languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+                    </select>
+                  </div>
                 </div>
-
-
                 <div style={slideComponentStyle}>
                   <SlideComponent
                     nextPage={this.nextPage}
@@ -381,42 +381,20 @@ class JobseekerParent extends Component {
                     userMarker={this.state.userMarker}
                    />
                 </div>
-
-
               </div>
             }
-
-
-
-
             {page > 1 && 
               <TopCounter 
                 finishedStep={this.state.page}
               />}
-        <Row center="xs">
-          <Col xs={12} sm={12} md={2} lg={8}>
-            {page === 1 && this.state.screenWidth > 700 && <div style={footerStyle}>
-              <RaisedButton primary={true} 
-              style={styles.raisedButtonStyle}
-              label="APPLY"
-              onClick={this.nextPage}/>
-            </div>}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          <Row center="xs">
+            <Col xs={12} sm={12} md={2} lg={8}>
+              {page === 1 && this.state.screenWidth > 700 && <div style={footerStyle}>
+                <RaisedButton primary={true} 
+                style={styles.raisedButtonStyle}
+                label={this.context.t("APPLY")}
+                onClick={this.nextPage}/>
+              </div>}
               <Animation
                 transitionName={this.state.slide}
                 transitionEnterTimeout={500}
@@ -444,19 +422,22 @@ class JobseekerParent extends Component {
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                   />}
+                {page === 66 &&
+                  <FormFifthPage 
+                    previousPage={this.previousPage}
+                    onSubmit={this.nextPage}
+                  />}
                 {page === 6 &&
-                  <div>{/*TAKE FROM THE OTHER PROJECT*/}</div>}
-                {page === 7 &&
                   <FormSixthPage 
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                   />}
-                {page === 8 &&
+                {page === 7 &&
                   <FormSeventhPage 
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                   />}
-                {page === 9 &&
+                {page === 8 &&
                   <FormEithPage 
                     previousPage={this.previousPage}
                     onSubmit={onSubmit}
@@ -474,6 +455,10 @@ JobseekerParent.propTypes = {
 }
 
 
+JobseekerParent.contextTypes = {
+  t: PropTypes.func.isRequired
+}
+
 
 function mapStateToProps(state) {
   return {
@@ -481,4 +466,8 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { fetchAllCampaigns, fetchCompanies })(JobseekerParent)
+export default connect(mapStateToProps, { fetchAllCampaigns, fetchCompanies })(
+  connect(state => ({
+    lang: state.i18nState.lang
+  }))(JobseekerParent)
+)

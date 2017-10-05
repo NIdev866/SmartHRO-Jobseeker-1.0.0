@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import { Checkbox } from "material-ui"
 import jobs from "../jobs.json"
@@ -6,7 +6,6 @@ import { Field, FieldArray, reduxForm } from 'redux-form'
 import { connect } from "react-redux"
 import { getFormValues } from 'redux-form'
 import { fetchCompanies, fetchAllCampaigns } from '../actions'
-
 
 const google = window.google
 
@@ -76,13 +75,6 @@ CheckboxComponent = connect(
 
 
 
-
-
-
-
-
-
-
 class CardExampleExpandable extends Component{
   constructor(props){
     super(props)
@@ -92,6 +84,7 @@ class CardExampleExpandable extends Component{
     this.countBoxesTicked = this.countBoxesTicked.bind(this)
     this.currentCampaignSalaryType = this.currentCampaignSalaryType.bind(this)
     this.createDuration = this.createDuration.bind(this)
+    this.handleWhichJobType = this.handleWhichJobType.bind(this)
   }
   countBoxesTicked(value){
     if(value){
@@ -101,31 +94,23 @@ class CardExampleExpandable extends Component{
       this.setState({boxesTicked: this.state.boxesTicked-1})
     }
   }
-
   currentCampaignSalaryType(salary_type, salary){
     switch(salary_type){
       case "PER_ANNUM":
-        return `£ ${salary} per annum`
+        return `£ ${salary} ${this.context.t('per annum')}`
       case "PER_WEEK":
-        return `£ ${salary} per week`
+        return `£ ${salary} ${this.context.t('per week')}`
       case "PER_DAY":
-        return `£ ${salary} per day`
+        return `£ ${salary} ${this.context.t('per day')}`
       case "PER_HOUR":
-        return `£ ${salary} per hour`
+        return `£ ${salary} ${this.context.t('per hour')}`
       default:
         return "error in salary_type OR salary"
     }
   }
 
-
-
-
-
-
-
   createDuration(campaignLat, campaignLng, i){
-              let resultDuration
-
+          let resultDuration
           let DurationService = new google.maps.DistanceMatrixService();
           DurationService.getDistanceMatrix({
               origins: [this.props.userMarker.position],
@@ -135,30 +120,36 @@ class CardExampleExpandable extends Component{
               avoidTolls: false,
             }, (result, status) => { 
 
+              console.log(result)
+
               if(result.rows[0].elements[0].status == "ZERO_RESULTS"){
-                if(this.state[`duration${i}`] && this.state[`duration${i}`] !== " ___________"){
+                if(this.state[`distance${i}`] && this.state[`distance${i}`] !== " ___________"){
                   return this.setState({    // prevState?
-                    [`duration${i}`]: " ___________"
+                    [`distance${i}`]: " ___________"
                   })
                 }
               }
-              console.log(result)
-
-              if(result && result.rows[0].elements[0].duration){
-
-                resultDuration = result.rows[0].elements[0].duration.text
-
-
-                if(this.state[`duration${i}`] !== resultDuration)
+              if(result && result.rows[0].elements[0].distance){
+                resultDuration = result.rows[0].elements[0].distance.text
+                if(this.state[`distance${i}`] !== resultDuration)
                 this.setState({    // prevState?
-                  [`duration${i}`]: resultDuration
+                  [`distance${i}`]: resultDuration
                 })
-
               }
           })
+  }
 
 
 
+
+
+  handleWhichJobType(job_type){
+    switch(job_type){
+      case 'TEMPORARY':
+        return this.context.t('Temporary')
+      case 'FULL_TIME':
+        return this.context.t('Full-time')
+    }
   }
 
 
@@ -166,22 +157,13 @@ class CardExampleExpandable extends Component{
 
 
 
-
-
-
-
-
-
   render(){
-
     const tickButtonStyle = {
       float: "right"
     }
     const cardStyle = {
       marginTop: "20px",
     }
-
-
 
     return(
       <div>
@@ -225,15 +207,15 @@ class CardExampleExpandable extends Component{
               >
                 <p style={{fontSize: "18px", margin: "-10px", marginTop: "-30px", padding: "0"}}><b>{campaign.campaign_name}</b></p>
                 <p style={{fontSize: "17px", margin: "-10px", marginTop: "10px", padding: "0"}}>{this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].company_name}</p>
-                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.location ? campaign.location : "location"}</p>
-                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.job_type ? campaign.job_type : "job type"}</p>
-                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.salary_type ? this.currentCampaignSalaryType(campaign.salary_type, campaign.salary) : "£ ... 'per month'etc"}</p>
-                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.job_start_date ? `Starting on ${campaign.job_start_date}` : "Starting on 13/07/2017"}</p>
+                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.location}</p>
+                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.handleWhichJobType(campaign.job_type)}</p>
+                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.currentCampaignSalaryType(campaign.salary_type, campaign.salary)}</p>
+                <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{`${this.context.t('Starting on')} ${campaign.job_start_date}`}</p>
               
 <p style={{fontSize: "15px", margin: "-10px",
  marginTop: "26px", padding: "0", 
 
- color: "grey"}}>Distance: {console.log(this.state[`duration${i}`]) && this.state[`duration${i}`] !== " ___________" ? this.state[`duration${i}`] + " away" : this.state[`duration${i}`]}</p>
+ color: "grey"}}>{this.context.t('Distance:')} {this.state[`distance${i}`] ? this.state[`distance${i}`] + ' ' + this.context.t("away") : this.context.t('Enter your rough location in the top left corner of map')}</p>
               
               </CardHeader>
 
@@ -266,10 +248,18 @@ function mapStateToProps(state) {
   };
 }
 
+CardExampleExpandable.contextTypes = {
+  t: PropTypes.func.isRequired
+}
+
 export default reduxForm({
   form: 'wizard',  // <------ same form name
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 })(
-  connect(mapStateToProps, { fetchCompanies, fetchAllCampaigns })(CardExampleExpandable)
+  connect(mapStateToProps, { fetchCompanies, fetchAllCampaigns })(
+    connect(state => ({
+      lang: state.i18nState.lang
+    }))(CardExampleExpandable)
+  )
 )

@@ -1,0 +1,51 @@
+export const translations = {
+  'pl': {
+    'Your rough location to see distance (Optional)':'Twoja ogolna lokacja zeby zobaczyc dystans (Opcjonalne)',
+  	'Loading...': 'Wczytywanie...',
+    'Temporary': 'Tymczasowe',
+    'Full-time': 'Pelnoetatowe',
+    'per annum': 'na rok', 
+    'per week': 'na tydzien',
+    'per day': 'na dzien',
+    'per hour': 'na godzine',
+    'Starting on': 'Poczatek pracy',
+    'Distance:':'Dystans:',
+    'Enter your rough location in the top left corner of map':'Wpisz swoja ogolna lokacje w lewym gornym rogu mapy',
+    'away': 'od ciebie',
+    'ALL JOBS': 'PRACE',
+    'PLEASE APPLY FOR JOBS BY REGISTERING WITH US.':'ZLOZ PODANIE O PRACE POPRZEZ REJESTRACJE U NAS.',
+    'Select maximum 3 job boxes to apply for them.':'Kliknij maksymalnie 3 kwadraciki na pracach aby je wybrac.',
+    'Click on the job to read more about it.':'Kliknij na prace zeby przeczytac o niej wiecej.',
+    'APPLY':'APLIKUJ',
+    'First Name':'Imie',
+    'Last Name':'Nazwisko',
+    'Prev':'Wroc',
+    'Next':'Dalej',
+    "I'm between":'Mam pomiedzy',
+    'yrs old':'lat',
+    'Select your age group':'Wybierz swoja grupe wiekowa',
+    'Select your nationality':'Wybierz swoja narodowosc',
+    'Gender':'Plec',
+    'Male':'Meszczyzna',
+    'Female':'Kobieta',
+    'Mobile Number':'Numer mobilny',
+    'Landline Number':'Numer stacjonarny',
+    'Repeat Email':'Powtorz Email',
+    'Yes':'Tak',
+    'No':'Nie',
+    'Are you currently self employed?':'Jestes aktualnie samozatrudniony?',
+    'Is this your first job in the UK?':'Jest to twoja pierwsza praca w UK?',
+    'Are you currently a student?':'Jestes aktualnie studentem?',
+    'Are you willing to travel to other places?':'Zgadzasz sie na mozliwosc podrozy do innych lokacji?',
+    'When can you start?':'Kiedy mozesz zaczac?',
+    'Tap to upload CV from Dropbox':'Kliknij zeby wyslac CV z Dropboxa',
+    'Tap to upload CV from Google Drive':'Kliknij zeby wyslac CV z Google Driva',
+    'I will send my CV later':'Wysle swoje CV pozniej',
+    'You have to email your CV within next 7 days to: _________':'Musisz wyslac swoje CV emailem w ciagu 7 dni do: _________',
+    'Not found.':'Nie znaleziono.'
+
+
+
+
+  }
+}

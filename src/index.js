@@ -13,6 +13,9 @@ import reduxThunk from 'redux-thunk';
 import JobseekerParent from "./jobseekerApp/jobseekerParent"
 
 
+import I18n from "redux-i18n"
+
+import {translations} from "./translations"
 
 
 
@@ -25,12 +28,14 @@ const store = createStore(reducers, composeEnhancers(
 
 ReactDOM.render(
   <Provider store={store}>
-    <MuiThemeProvider>
-      <BrowserRouter>
-        <div>
-          <Route path="/" component={JobseekerParent} />
-        </div>
-      </BrowserRouter>
-    </MuiThemeProvider>
+    <I18n translations={translations}>
+      <MuiThemeProvider>
+        <BrowserRouter>
+          <div>
+            <Route path="/" component={JobseekerParent} />
+          </div>
+        </BrowserRouter>
+      </MuiThemeProvider>
+    </I18n>
   </Provider>
   , document.getElementById('root'));

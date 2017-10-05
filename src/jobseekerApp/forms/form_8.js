@@ -1,5 +1,6 @@
-import React, { Component} from 'react'
-import { Field, reduxForm } from 'redux-form'
+import React, { Component, PropTypes } from 'react'
+import { Field, reduxForm, hasSubmitFailed } from 'redux-form'
+//import FileField from 'redux-form-dropzone'
 import validate from './validate'
 import RaisedButton from 'material-ui/RaisedButton'
 import styles from './form_material_styles'
@@ -10,6 +11,12 @@ import { Checkbox } from "material-ui"
 import DropboxChooser from "react-dropbox-chooser"
 import GooglePicker from "react-google-picker"
 
+import RemoteSubmitButton from './RemoteSubmitButton'
+import { connect } from 'react-redux'
+
+
+
+
 
 class Later extends Component{
   handleCheckbox(){
@@ -18,7 +25,7 @@ class Later extends Component{
       onChange(null)
       return
     }
-    window.alert("You have to email your CV within next 7 days to ...@...com")
+    window.alert(this.context.t('You have to email your CV within next 7 days to: _________'))
     onChange("Later")
   }
   render(){
@@ -33,13 +40,17 @@ class Later extends Component{
             onCheck={this.handleCheckbox.bind(this)}
           />
         </div>
-        <div>I will send my CV later</div>
+        <div>{this.context.t('I will send my CV later')}</div>
         <div style={{color: "red", marginTop: "15px"}}>
           {(dirty || touched) ? <span>{error}</span> : ""}
         </div>
       </div>
     )
   }
+}
+
+Later.contextTypes = {
+  t: PropTypes.func.isRequired
 }
 
 class GoogleDrive extends Component{
@@ -68,11 +79,15 @@ class GoogleDrive extends Component{
               mimeTypes={['application/vnd.google-apps.document', "text/plain",
                 "application/pdf", "application/msword", "text/xml"]}
               viewId={'DOCS'}>
-           <div><div style={googleDriveButton}>Tap to upload CV from Google Drive</div></div>
+           <div><div style={googleDriveButton}>{this.context.t('Tap to upload CV from Google Drive')}</div></div>
         </GooglePicker>
       </div>
     )
   }
+}
+
+GoogleDrive.contextTypes = {
+  t: PropTypes.func.isRequired
 }
 
 class Dropbox extends Component{
@@ -91,22 +106,28 @@ class Dropbox extends Component{
   const { input: { onChange } } = this.props
     return (
       <div style={{marginTop: "40px"}}>
-        <DropboxChooser 
+        <DropboxChooser
           appKey={'7mx41a7h4zq8uvs'}
-          success={files => onChange(files[0].name)}
+          success={files => onChange(files[0].link)}
           multiselect={false}
-          extensions={['.pdf', '.doc', '.docx', 
-        '.rtf', '.wps', '.odt', '.wpd', '.txt', 
+          extensions={['.pdf', '.doc', '.docx',
+        '.rtf', '.wps', '.odt', '.wpd', '.txt',
         '.xml']} >
-          <div><div style={dropboxButton}>Tap to upload CV from Dropbox</div></div>        
+          <div><div style={dropboxButton}>{this.context.t('Tap to upload CV from Dropbox')}</div></div>
         </DropboxChooser>
       </div>
     )
   }
 }
 
-class FormFirstPage extends Component{
+Dropbox.contextTypes = {
+  t: PropTypes.func.isRequired
+}
+
+
+class FormLastPage extends Component{
  render(){
+
   const { handleSubmit, previousPage } = this.props
     return (
       <form onSubmit={handleSubmit}>
@@ -127,6 +148,12 @@ class FormFirstPage extends Component{
             <Field
               name="CV"
               type="text"
+              component={Dropzone}
+              label="CV"
+            />
+            <Field
+              name="CV"
+              type="text"
               component={Later}
               label="CV"
             />
@@ -135,22 +162,34 @@ class FormFirstPage extends Component{
         <Row center="xs">
           <RaisedButton
             type="button"
-            label="Prev"
+            label={this.context.t("Prev")}
             primary={true}
             onClick={previousPage}
             style={styles.raisedButtonStyle}
           />
-          <RaisedButton
+          {/*<RaisedButton
             type="submit"
             label="Submit"
             primary={true}
             style={styles.raisedButtonStyle}
-          />
+          />*/}
+          <RemoteSubmitButton />
         </Row>
       </form>
     )
   }
 }
+
+FormLastPage.contextTypes = {
+  t: PropTypes.func.isRequired
+}
+
+FormLastPage = connect(
+  state => ({
+    submitFailed: hasSubmitFailed('wizard')(state)
+  })
+)(FormLastPage)
+
 
 export default reduxForm({
   form: 'wizard', // <------ same form name
@@ -158,4 +197,4 @@ export default reduxForm({
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   onSubmit: submit,
   validate
-})(FormFirstPage)
+})(FormLastPage)
