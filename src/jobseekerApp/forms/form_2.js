@@ -92,17 +92,6 @@ class FormSecondPage extends Component {
             </Field>
             <Field name="age" component={renderError} />
           </div>
-          <div onClick={this.handleLoaderState}>
-            <Field name="nationality" component={SelectField}
-                  hintText={this.context.t('Select your nationality')}
-                  selectedMenuItemStyle={{color: "#00BCD4"}}
-                  underlineStyle={{display: "none"}}
-                  errorStyle={{display: "none"}}>
-                  {this.renderCountrySelector(countries)}
-            </Field>
-          </div>
-          {this.state.loader && <span style={{marginLeft: "300px"}}><CircularProgress /></span>}
-          <Field name="nationality" component={renderError} />
         </div>
         <Col xs={12} sm={6} md={3} lg={5} style={{marginTop: "113px"}}>
           <RaisedButton

@@ -212,25 +212,12 @@ class CardExampleExpandable extends Component{
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.currentCampaignSalaryType(campaign.salary_type, campaign.salary)}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{`${this.context.t('Starting on')} ${campaign.job_start_date}`}</p>
               
-<p style={{fontSize: "15px", margin: "-10px",
- marginTop: "26px", padding: "0", 
+                <p style={{fontSize: "15px", margin: "-10px",
+                 marginTop: "26px", padding: "0", 
 
- color: "grey"}}>{this.context.t('Distance:')} {this.state[`distance${i}`] ? this.state[`distance${i}`] + ' ' + this.context.t("away") : this.context.t('Enter your rough location in the top left corner of map')}</p>
+                 color: "grey"}}>{this.context.t('Distance:')} {this.state[`distance${i}`] ? this.state[`distance${i}`] + ' ' + this.context.t("away") : this.context.t('Enter your rough location in the top left corner of map')}</p>
               
               </CardHeader>
-
-
-
-
-
-
-              <CardText expandable={true} style={{paddingBottom: "1px", paddingTop: "1px"}}>
-              <div style={{borderTop: "1px solid #DCDCDC", paddingTop: "10px"}}>
-                <div style={{maxWidth: "500px", margin: "0 auto", textAlign: "left"}}>
-                  <div>job description <br /> job description <br /> job description <br /> job description <br /> job description <br /> job description <br /> </div>
-                </div>
-              </div>
-            </CardText>
           </Card>
           </div>
         )

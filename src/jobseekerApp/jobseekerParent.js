@@ -30,16 +30,6 @@ const google = window.google
 
 
 
-
-
-
-
-
-
-
-
-
-
 class JobseekerParent extends Component {
   constructor(props) {
     super(props)
@@ -366,10 +356,12 @@ class JobseekerParent extends Component {
                   {!this.state.loading && this.state.geocodeResults ?
                         <div className='geocoding-results'>{this.state.geocodeResults}</div> :
                       null}
-                  <div style={{backgroundColor: 'red', zIndex: '999999'}}>
-                    <select value={this.props.lang} onChange={this.onChangeLang}>
-                      {this.languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-                    </select>
+                  <div style={{zIndex: '999999',}}>
+                    <div style={{display: 'inline-block', float: 'left'}}>
+                      <select value={this.props.lang} onChange={this.onChangeLang}>
+                        {this.languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div style={slideComponentStyle}>
