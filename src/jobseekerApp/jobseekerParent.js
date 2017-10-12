@@ -20,7 +20,6 @@ import { Marker, GoogleMap, DirectionsRenderer } from "react-google-maps"
 import MapComponent from "./mapComponent"
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
 
-import ReactResizeDetector from 'react-resize-detector';
 import JobCards from './jobCards'
 import SlideComponent from './slideComponent'
 import {setLanguage} from 'redux-i18n'
@@ -43,7 +42,6 @@ class JobseekerParent extends Component {
     this.handleUpdatingMarker = this.handleUpdatingMarker.bind(this)
     this.createRoutes = this.createRoutes.bind(this)
     this.setRoutes = this.setRoutes.bind(this)
-    this._onResize = this._onResize.bind(this)
     this.sliderClick = this.sliderClick.bind(this)
     this.state = {
       slide: "toLeft",
@@ -57,27 +55,30 @@ class JobseekerParent extends Component {
       address: "",
       geocodeResults: null,
       loading: false,
-      screenWidth: null,
-      slider: "closed"
+      slider: "closed",
+
+
+      width: '0', height: '0'
     }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+
+
+
+
     this.languages = ['pl', 'en']
   }
   sliderClick(){
     const { slider } = this.state
     this.setState({slider: slider == "closed" ? "open" : "closed"})
   }
-  _onResize(width) {
-    this.setState({screenWidth: width})
-
-  }
   nextPage() {
-    this.setState({ 
+    this.setState({
       page: this.state.page + 1,
       slide: "toLeft"
     })
   }
   previousPage() {
-    this.setState({ 
+    this.setState({
       page: this.state.page - 1,
       slide: "toRight"
     })
@@ -89,9 +90,22 @@ class JobseekerParent extends Component {
   }
 
   componentWillMount(){
-    this.props.fetchAllCampaigns()    
+    this.props.fetchAllCampaigns()
     this.props.fetchCompanies()
     this.props.dispatch(setLanguage('en'))
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 
   onChangeLang = (e) => {
@@ -148,8 +162,8 @@ class JobseekerParent extends Component {
   renderGeocodeSuccess(lat, lng) {}
   renderGeocodeFailure(err) {
     return (
-      <div 
-        className="alert alert-danger" 
+      <div
+        className="alert alert-danger"
         role="alert"
         style={{backgroundColor: "white"}}
       >
@@ -159,7 +173,7 @@ class JobseekerParent extends Component {
   }
 
 
-  createRoutes(){      
+  createRoutes(){
     for(let i = 0; i < this.props.allCampaigns.length; i++){
       let routesArray = []
       let lengthToMap = this.props.allCampaigns.length
@@ -171,7 +185,7 @@ class JobseekerParent extends Component {
           origin: this.state.userMarker.position,
           destination: {lat: parseFloat(venue.lat), lng: parseFloat(venue.lng)},
           travelMode: google.maps.TravelMode.DRIVING,
-        }, (result, status) => { 
+        }, (result, status) => {
           if(this.state.userMarker.position.lat !== 0){
             routesArray.push(result)
           }
@@ -197,7 +211,7 @@ class JobseekerParent extends Component {
 
   render() {
     let footerStyle = {}
-    if(this.state.screenWidth > 700){
+    if(this.state.width > 700){
       footerStyle = {
         textAlign: "center",
         position: "fixed",
@@ -217,7 +231,7 @@ class JobseekerParent extends Component {
       footerStyle = {}
     }
     let slideComponentStyle = {}
-    if(this.state.screenWidth > 700){
+    if(this.state.width > 700){
       if(this.state.slider != "closed"){
         this.setState({slider: 'closed'})
       }
@@ -226,11 +240,11 @@ class JobseekerParent extends Component {
           overflow: "hidden",
           position: "absolute",
           transition: "all .2s ease-in-out",
-          height: "100vh",
+          height: this.state.height,
           backgroundColor: "white",
           borderTop: "1px solid #CCCCCC",
-          width: "40vw",
-          left: '60vw',
+          width: this.state.width / 100 * 40,
+          left: this.state.width / 100 * 60,
           top: "0"
         }
       }
@@ -244,8 +258,8 @@ class JobseekerParent extends Component {
           height: "50px",
           backgroundColor: "white",
           borderTop: "1px solid #CCCCCC",
-          width: "100vw",
-          top: "calc(100vh - 51px)"
+          width: this.state.width,
+          top: this.state.height - 51
         }
       }
       else{
@@ -253,9 +267,9 @@ class JobseekerParent extends Component {
           overflow: "hidden",
           position: "absolute",
           transition: "all .2s ease-in-out",
-          height: "100vh",
+          height: this.state.height,
           backgroundColor: "white",
-          width: "100vw",
+          width: this.state.width,
           top: "0px"
         }
       }
@@ -264,41 +278,40 @@ class JobseekerParent extends Component {
     if(this.state.slider == "closed"){
       openIconStyle = {
         transition: "all .4s ease-in-out",
-        width: "50px", 
+        width: "50px",
         marginLeft: "50%"
-
       }
     }
     else{
       openIconStyle = {
         transition: "all .4s ease-in-out",
-        width: "50px", 
+        width: "50px",
         marginLeft: "50%",
         transform: "rotate(180deg)"
       }
     }
     let mapComponentStyle = {}
-    if(this.state.screenWidth > 700){
+    if(this.state.width > 700){
       mapComponentStyle = {
-        float: "left", 
-        width: "60%", 
-        position: "fixed", 
-        height: "100vh"
+        float: "left",
+        width: "60%",
+        position: "fixed",
+        height: this.state.height - 50
       }
     }
     else{
       mapComponentStyle = {
-        float: "left", 
-        width: "100vh", 
-        position: "fixed", 
-        height: "100vh"
+        float: "left",
+        width: this.state.width,
+        position: "fixed",
+        height: this.state.height - 50
       }
     }
     let styleObj
-    if(this.state.screenWidth > 700){
+    if(this.state.width > 700){
       styleObj = {
         input: { padding: "6px", width: "320px"},
-        autocompleteContainer: { 
+        autocompleteContainer: {
         zIndex: "99999", width: "100%"},
         autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
         autocompleteItemActive: { color: '#00BCD4' },
@@ -308,16 +321,16 @@ class JobseekerParent extends Component {
     else{
       styleObj = {
         input: { padding: "6px", width: "calc(100vw - 24px)"},
-        autocompleteContainer: { 
+        autocompleteContainer: {
         zIndex: "99999", width: "100%"},
         autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
         autocompleteItemActive: { color: '#00BCD4' },
         googleLogoImage: { width: "10px"}
-      }      
+      }
     }
     const inputStyling = {
-      position: "fixed", 
-      top: "4", 
+      position: "fixed",
+      top: "4",
       marginLeft: "4",
     }
     const inputProps = {
@@ -329,13 +342,12 @@ class JobseekerParent extends Component {
     const { onSubmit } = this.props
     const { page } = this.state
     return (
-      <div style={{position: "relative", width: "100vw", height: "100vh", overflow: "hidden"}}>
-        <ReactResizeDetector handleWidth handleHeight onResize={this._onResize} />
-            {page === 1 && 
+      <div style={{position: "relative", width: this.state.width, height: this.state.height, overflow: "hidden"}}>
+            {page === 1 &&
               <div>
                 <div style={mapComponentStyle}>
                 {this.props.allCampaigns &&
-                  <MapComponent 
+                  <MapComponent
                     zoom={10}
                     center={{ lat: 51.537452, lng: -0.497681}}
                     containerElement={<div style={{height: 100+"%"}} />}
@@ -346,10 +358,10 @@ class JobseekerParent extends Component {
                 }
                 </div>
                 <div style={inputStyling}>
-                  <PlacesAutocomplete 
+                  <PlacesAutocomplete
                     onSelect={this.handleSelect}
-                    styles={styleObj} 
-                    inputProps={inputProps} 
+                    styles={styleObj}
+                    inputProps={inputProps}
                     onEnterKeyDown={this.handleSelect}
                   />
                   {this.state.loading ? <div style={{backgroundColor: "white"}}>{this.context.t('Loading...')}</div> : null}
@@ -367,7 +379,7 @@ class JobseekerParent extends Component {
                 <div style={slideComponentStyle}>
                   <SlideComponent
                     nextPage={this.nextPage}
-                    screenWidth={this.state.screenWidth}
+                    screenWidth={this.state.width}
                     sliderClick={this.sliderClick}
                     openIconStyle={openIconStyle}
                     userMarker={this.state.userMarker}
@@ -375,14 +387,14 @@ class JobseekerParent extends Component {
                 </div>
               </div>
             }
-            {page > 1 && 
-              <TopCounter 
+            {page > 1 &&
+              <TopCounter
                 finishedStep={this.state.page}
               />}
           <Row center="xs">
             <Col xs={12} sm={12} md={2} lg={8}>
-              {page === 1 && this.state.screenWidth > 700 && <div style={footerStyle}>
-                <RaisedButton primary={true} 
+              {page === 1 && this.state.width > 700 && <div style={footerStyle}>
+                <RaisedButton primary={true}
                 style={styles.raisedButtonStyle}
                 label={this.context.t("APPLY")}
                 onClick={this.nextPage}/>
@@ -395,9 +407,9 @@ class JobseekerParent extends Component {
                 transitionAppearTimeout={500}
               >
                 {page === 2 &&
-                  <FormFirstPage 
+                  <FormFirstPage
                     previousPage={this.previousPage}
-                    onSubmit={this.nextPage} 
+                    onSubmit={this.nextPage}
                   />}
                 {page === 3 &&
                   <FormSecondPage
@@ -415,22 +427,22 @@ class JobseekerParent extends Component {
                     onSubmit={this.nextPage}
                   />}
                 {page === 66 &&
-                  <FormFifthPage 
+                  <FormFifthPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                   />}
                 {page === 6 &&
-                  <FormSixthPage 
+                  <FormSixthPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                   />}
                 {page === 7 &&
-                  <FormSeventhPage 
+                  <FormSeventhPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                   />}
                 {page === 8 &&
-                  <FormEithPage 
+                  <FormEithPage
                     previousPage={this.previousPage}
                     onSubmit={onSubmit}
                   />}

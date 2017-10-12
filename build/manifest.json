@@ -1,0 +1,12 @@
+{
+  "name": "Team Supporter",
+  "short_name":"TeamSupporter",
+  "start_url":"/index.html",
+  "scope":".",
+  "display":"minimal-ui",
+  "orientation":"portrait-primary",
+  "background_color":"#455A64",
+  "theme_color":"#455A64",
+  "description":"Team Supporter, find and hire best candidates.",
+  "lang":"en-US"
+}

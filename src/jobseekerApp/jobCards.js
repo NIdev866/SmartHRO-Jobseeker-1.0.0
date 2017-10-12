@@ -50,7 +50,7 @@ class CheckboxComponent extends Component{
   render(){
     return(
       <div>
-        <Checkbox 
+        <Checkbox
           disableTouchRipple
           disabled={this.seeIfDisabled()}
           onCheck={this.updateCheck.bind(this)}
@@ -118,7 +118,7 @@ class CardExampleExpandable extends Component{
               travelMode: 'DRIVING',
               avoidHighways: false,
               avoidTolls: false,
-            }, (result, status) => { 
+            }, (result, status) => {
 
               console.log(result)
 
@@ -168,36 +168,23 @@ class CardExampleExpandable extends Component{
     return(
       <div>
         {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign, i) => {
-          
-
 
 
           this.createDuration(parseFloat(campaign.lat), parseFloat(campaign.lng), i)
 
 
-
-
-
-
-
-
           return(
             <div>
             <div style={tickButtonStyle}>
-              <FieldArray 
-                name="jobsSelected" 
+              <FieldArray
+                name="jobs_selected"
                 component={CheckboxComponent}
-                jobSelected={campaign.id}
+                jobSelected={{campaign_id: campaign.campaign_id, company_id: campaign.company_id, position_id: campaign.job_id}}
                 countBoxesTicked={this.countBoxesTicked}
                 boxesTicked={this.state.boxesTicked}
               />
             </div>
             <Card style={cardStyle}>
-
-
-
-
-
 
               <CardHeader
                 style={{height: "160px", textAlign: "left"}}
@@ -211,12 +198,12 @@ class CardExampleExpandable extends Component{
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.handleWhichJobType(campaign.job_type)}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.currentCampaignSalaryType(campaign.salary_type, campaign.salary)}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{`${this.context.t('Starting on')} ${campaign.job_start_date}`}</p>
-              
+
                 <p style={{fontSize: "15px", margin: "-10px",
-                 marginTop: "26px", padding: "0", 
+                 marginTop: "26px", padding: "0",
 
                  color: "grey"}}>{this.context.t('Distance:')} {this.state[`distance${i}`] ? this.state[`distance${i}`] + ' ' + this.context.t("away") : this.context.t('Enter your rough location in the top left corner of map')}</p>
-              
+
               </CardHeader>
           </Card>
           </div>

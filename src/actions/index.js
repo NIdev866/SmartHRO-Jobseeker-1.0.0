@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import { 
+import {
   COMPANIES,
   ALL_CAMPAIGNS,
   ADD_DURATION_TO_CAMPAIGNS
@@ -9,7 +9,7 @@ import {
 
 
 
-const ROOT_URL = 'http://localhost:3000';
+const ROOT_URL = 'http://ec2-54-77-236-165.eu-west-1.compute.amazonaws.com:3000';
 
 
 

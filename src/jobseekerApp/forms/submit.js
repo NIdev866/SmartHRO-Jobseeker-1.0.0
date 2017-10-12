@@ -4,22 +4,41 @@ import axios from 'axios'
 
 function submit(values) {
 
-  const form_data = new FormData();
-  for(var i in values){
-				form_data.append(i, values[i]);
-			}
-  form_data.append('file', new Blob(values.CV, {type:'application/rtf'}));
+  const ROOT_URL = 'http://ec2-54-77-236-165.eu-west-1.compute.amazonaws.com:3000';
 
+  axios.post(`${ROOT_URL}/jobseeker/signup`,values)
+      .then(function (response) {
+          //handle success
+          //console.log(response);
 
-  axios.post('http://localhost:3000/jobseeker/signup',form_data)
-  .then(res=>window.location.replace('/'))
-  .catch(err=>{
-    console.log('ERROR FROM SERVER '+err);
-    throw new SubmissionError({
-      _error: JSON.stringify(err)
-    })
-  }
-  )
+          let form_data = new FormData();
+          form_data.set('file', new Blob(values.CV, {type:'application/rtf'}));
+          axios({
+                method: 'post',
+                url: `${ROOT_URL}/jobseeker/upload-cv`,
+                data: form_data,
+                config: { headers: {'Content-Type': 'multipart/form-data' }}
+            })
+            .then(function (response) {
+                //handle success
+                //console.log(response);
+                window.location.replace('/');
+            })
+            .catch(function (err) {
+              console.log('ERROR FROM FILE UPLOAD '+err);
+               throw new SubmissionError({
+                 _error: JSON.stringify(err)
+               })
+            });
+
+      })
+      .catch(function (err) {
+        console.log('ERROR FROM SERVER '+err);
+         throw new SubmissionError({
+           _error: JSON.stringify(err)
+         })
+      });
+
 }
 
 export default submit

@@ -1,5 +1,6 @@
 {
   "name": "team-supporter-client",
+  "url":"http://smart-hro-jobseeker.s3-website-eu-west-1.amazonaws.com",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -37,7 +38,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && aws s3 sync build/ s3://smart-hro-jobseeker",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
