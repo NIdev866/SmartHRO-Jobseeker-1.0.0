@@ -31,11 +31,13 @@ class CheckboxComponent extends Component{
       }
       else if(!this.state.checked){
         this.props.countBoxesTicked(false)
-        this.props.jobsSelectedValues.map((singleField, index)=>{
-          if(this.props.jobSelected === singleField){
-            this.props.fields.remove(index)
-          }
-        })
+        if(this.props.jobsSelectedValues){
+          this.props.jobsSelectedValues.map((singleField, index)=>{
+            if(this.props.jobSelected === singleField){
+              this.props.fields.remove(index)
+            }
+          })
+        }
       }
     })
   }
@@ -110,39 +112,31 @@ class CardExampleExpandable extends Component{
   }
 
   createDuration(campaignLat, campaignLng, i){
-          let resultDuration
-          let DurationService = new google.maps.DistanceMatrixService();
-          DurationService.getDistanceMatrix({
-              origins: [this.props.userMarker.position],
-              destinations: [{lat: campaignLat, lng: campaignLng}],
-              travelMode: 'DRIVING',
-              avoidHighways: false,
-              avoidTolls: false,
-            }, (result, status) => {
-
-              console.log(result)
-
-              if(result.rows[0].elements[0].status == "ZERO_RESULTS"){
-                if(this.state[`distance${i}`] && this.state[`distance${i}`] !== " ___________"){
-                  return this.setState({    // prevState?
-                    [`distance${i}`]: " ___________"
-                  })
-                }
-              }
-              if(result && result.rows[0].elements[0].distance){
-                resultDuration = result.rows[0].elements[0].distance.text
-                if(this.state[`distance${i}`] !== resultDuration)
-                this.setState({    // prevState?
-                  [`distance${i}`]: resultDuration
-                })
-              }
+    let resultDuration
+    let DurationService = new google.maps.DistanceMatrixService();
+    DurationService.getDistanceMatrix({
+        origins: [this.props.userMarker.position],
+        destinations: [{lat: campaignLat, lng: campaignLng}],
+        travelMode: 'DRIVING',
+        avoidHighways: false,
+        avoidTolls: false,
+      }, (result, status) => {
+        if(result.rows[0].elements[0].status == "ZERO_RESULTS"){
+          if(this.state[`distance${i}`] && this.state[`distance${i}`] !== " ___________"){
+            return this.setState({    // prevState?
+              [`distance${i}`]: " ___________"
+            })
+          }
+        }
+        if(result && result.rows[0].elements[0].distance){
+          resultDuration = result.rows[0].elements[0].distance.text
+          if(this.state[`distance${i}`] !== resultDuration)
+          this.setState({    // prevState?
+            [`distance${i}`]: resultDuration
           })
+        }
+    })
   }
-
-
-
-
-
   handleWhichJobType(job_type){
     switch(job_type){
       case 'TEMPORARY':
@@ -151,28 +145,21 @@ class CardExampleExpandable extends Component{
         return this.context.t('Full-time')
     }
   }
-
-
-
-
-
-
   render(){
     const tickButtonStyle = {
-      float: "right"
+      float: "right",
     }
     const cardStyle = {
       marginTop: "20px",
     }
 
+
+
     return(
-      <div>
+      <div style={{margin: '2px', marginBottom: '55px'}}>
         {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign, i) => {
-
-
+          console.log(campaign)
           this.createDuration(parseFloat(campaign.lat), parseFloat(campaign.lng), i)
-
-
           return(
             <div>
             <div style={tickButtonStyle}>
@@ -185,26 +172,43 @@ class CardExampleExpandable extends Component{
               />
             </div>
             <Card style={cardStyle}>
-
               <CardHeader
-                style={{height: "160px", textAlign: "left"}}
+                style={{height: "180px", textAlign: "left"}}
                 actAsExpander={true}
                 showExpandableButton={true}
                 iconStyle={{position: "relative", left: "12px"}}
               >
-                <p style={{fontSize: "18px", margin: "-10px", marginTop: "-30px", padding: "0"}}><b>{campaign.campaign_name}</b></p>
-                <p style={{fontSize: "17px", margin: "-10px", marginTop: "10px", padding: "0"}}>{this.props.companies.filter(el=>el.company_id === campaign.company_id)[0].company_name}</p>
+                <p style={{fontSize: "18px", margin: "-10px", marginTop: "-30px", padding: "0", color: '#00BCD4'}}>
+                <b>{this.context.t('Ref number: ')}{campaign.campaign_id}
+                </b>
+                </p>
+
+                {this.props.width > 900 
+                  ?
+                  <p style={{fontSize: '18px', margin: "-10px", marginTop: "10px", padding: "0"}}>{campaign.campaign_name}</p>
+                  :
+                  <div>
+                    <p style={{fontSize: '18px', margin: "-10px", marginTop: "10px", padding: "0"}}>{campaign.campaign_name.substring(0,30)}</p>
+                    <p style={{fontSize: '18px', margin: "-10px", marginTop: "10px", padding: "0"}}>{campaign.campaign_name.substring(30)}</p>
+                  </div>
+                }
+
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{campaign.location}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.handleWhichJobType(campaign.job_type)}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{this.currentCampaignSalaryType(campaign.salary_type, campaign.salary)}</p>
                 <p style={{fontSize: "15px", margin: "-10px", marginTop: "10px", padding: "0", color: "grey"}}>{`${this.context.t('Starting on')} ${campaign.job_start_date}`}</p>
-
                 <p style={{fontSize: "15px", margin: "-10px",
-                 marginTop: "26px", padding: "0",
-
-                 color: "grey"}}>{this.context.t('Distance:')} {this.state[`distance${i}`] ? this.state[`distance${i}`] + ' ' + this.context.t("away") : this.context.t('Enter your rough location in the top left corner of map')}</p>
-
+                  marginTop: "26px", padding: "0",
+                  color: "grey"}}>{this.context.t('Distance:')} {this.state[`distance${i}`] ? 
+                  this.state[`distance${i}`] + ' ' + this.context.t("away") : 
+                  this.context.t('Enter your location')}</p>
               </CardHeader>
+                  <CardText expandable={true}>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
+      Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
+      Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+    </CardText>
           </Card>
           </div>
         )

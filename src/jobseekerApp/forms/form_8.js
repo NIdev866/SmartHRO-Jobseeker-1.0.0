@@ -13,6 +13,7 @@ import GooglePicker from "react-google-picker"
 
 import RemoteSubmitButton from './RemoteSubmitButton'
 import { connect } from 'react-redux'
+import Paper from 'material-ui/Paper';
 
 
 
@@ -32,7 +33,7 @@ class Later extends Component{
     const { input: { value, onChange } } = this.props
     const { meta: { dirty, touched, error }} = this.props
     return(
-      <div style={{marginTop: "40px"}}>
+      <div style={{marginTop: "10px"}}>
         <div style={{width: "50px", margin: "0 auto"}}>
           <Checkbox
             checked={value !== "Later" ? false : true}
@@ -41,7 +42,7 @@ class Later extends Component{
           />
         </div>
         <div>{this.context.t('I will send my CV later')}</div>
-        <div style={{color: "red", marginTop: "15px"}}>
+        <div style={{color: "red", marginTop: "3px"}}>
           {(dirty || touched) ? <span>{error}</span> : ""}
         </div>
       </div>
@@ -125,70 +126,119 @@ Dropbox.contextTypes = {
 }
 
 
-class FormLastPage extends Component{
+class FormEithPage extends Component{
  render(){
 
   const { handleSubmit, previousPage } = this.props
     return (
       <form onSubmit={handleSubmit}>
-        <Row center="xs" style={{height: 360}}>
-          <Col xs={10} sm={10} md={3} lg={5}>
-            <Field
-              name="CV"
-              type="text"
-              component={Dropbox}
-              label="CV"
-            />
-            <Field
-              name="CV"
-              type="text"
-              component={GoogleDrive}
-              label="CV"
-            />
-            <Field
-              name="CV"
-              type="text"
-              component={Dropzone}
-              label="CV"
-            />
-            <Field
-              name="CV"
-              type="text"
-              component={Later}
-              label="CV"
-            />
-          </Col>
-        </Row>
-        <Row center="xs">
-          <RaisedButton
-            type="button"
-            label={this.context.t("Prev")}
-            primary={true}
-            onClick={previousPage}
-            style={styles.raisedButtonStyle}
-          />
-          {/*<RaisedButton
-            type="submit"
-            label="Submit"
-            primary={true}
-            style={styles.raisedButtonStyle}
-          />*/}
-          <RemoteSubmitButton />
-        </Row>
+        {this.props.width > 700 ?
+          <Paper style={{maxWidth: '700px', margin: '0 auto', paddingTop: '10px'}} zDepth={2} rounded={false}>
+            <Row center="xs" style={{height: 360, width: '80%', margin: '0 auto'}}>
+              <Col xs={10} sm={10} md={3} lg={5}>
+                <Field
+                  name="CV"
+                  type="text"
+                  component={Dropbox}
+                  label="CV"
+                />
+                <Field
+                  name="CV"
+                  type="text"
+                  component={GoogleDrive}
+                  label="CV"
+                />
+                <Field
+                  name="CV"
+                  type="text"
+                  component={Dropzone}
+                  label="CV"
+                />
+{/*                <Field
+                  name="CV"
+                  type="text"
+                  component={Later}
+                  label="CV"
+                />*/}
+              </Col>
+            </Row>
+            <Row center="xs" style={{marginTop: '20px'}}>
+              <RaisedButton
+                type="button"
+                label={this.context.t("Prev")}
+                primary={true}
+                onClick={previousPage}
+                style={styles.raisedButtonStyle}
+              />
+              <RaisedButton
+                type="submit"
+                label={this.context.t('Next')}
+                primary={true}
+                style={styles.raisedButtonStyle}
+              />
+            </Row>
+          </Paper>
+          :
+          <div>
+            <Row center="xs" style={{height: 360}}>
+              <Col xs={10} sm={10} md={3} lg={5}>
+                <Field
+                  name="CV"
+                  type="text"
+                  component={Dropbox}
+                  label="CV"
+                />
+                <Field
+                  name="CV"
+                  type="text"
+                  component={GoogleDrive}
+                  label="CV"
+                />
+                <Field
+                  name="CV"
+                  type="text"
+                  component={Dropzone}
+                  label="CV"
+                />
+{/*                <Field
+                  name="CV"
+                  type="text"
+                  component={Later}
+                  label="CV"
+                />*/}
+              </Col>
+            </Row>
+            <Row center="xs" style={{marginTop: '20px'}}>
+              <RaisedButton
+                type="button"
+                label={this.context.t("Prev")}
+                primary={true}
+                onClick={previousPage}
+                style={styles.raisedButtonStyle}
+              />
+              <RaisedButton
+                type="submit"
+                label={this.context.t('Next')}
+                primary={true}
+                style={styles.raisedButtonStyle}
+              />
+            </Row>
+          </div>
+        }
       </form>
     )
   }
 }
 
-FormLastPage.contextTypes = {
+FormEithPage.contextTypes = {
   t: PropTypes.func.isRequired
 }
 
-FormLastPage = connect(
+FormEithPage = connect(
   state => ({
     submitFailed: hasSubmitFailed('wizard')(state)
   })
-)(FormLastPage)
+)(FormEithPage)
 
 
 export default reduxForm({
@@ -197,4 +247,4 @@ export default reduxForm({
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   onSubmit: submit,
   validate
-})(FormLastPage)
+})(FormEithPage)

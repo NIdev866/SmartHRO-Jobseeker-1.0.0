@@ -3,7 +3,35 @@ import { withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-goog
 import _ from "lodash"
 
 class MapComponent extends Component {
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      center: null
+    }
+  }
+
+  setMapCenter(){
+
+    let centerPoint = this.props.allCampaigns.filter((campaign, i)=>{
+      return i == 0
+    })
+
+    let centerPointFiltered = {}
+    centerPointFiltered.lat = parseFloat(centerPoint[0].lat)
+    centerPointFiltered.lng = parseFloat(centerPoint[0].lng)
+
+    this.setState({center: centerPointFiltered}, ()=>{
+      console.log(this.state.center)
+    })
+  }
+
   render(){
+
+    if(!this.state.center){
+      this.setMapCenter()
+    }
 
     let mappedMarkers = []
     if(!this.props.routes){
@@ -30,14 +58,18 @@ class MapComponent extends Component {
       })
     }
     return(
-      <GoogleMap
-        defaultZoom={this.props.zoom}
-        defaultCenter={this.props.center}
-        onMarkerClick={_.noop}
-        options={{streetViewControl: false, mapTypeControl: false, zoomControl: false, fullscreenControl: false}}>
-        {mappedRoutes}        
-        {this.props.allCampaigns && mappedMarkers}
-      </GoogleMap>
+      <div>
+        {this.state.center &&
+        <GoogleMap
+          defaultZoom={this.props.zoom}
+          defaultCenter={this.state.center}
+          onMarkerClick={_.noop}
+          options={{streetViewControl: false, mapTypeControl: false, zoomControl: false, fullscreenControl: false}}>
+          {mappedRoutes}        
+          {this.props.allCampaigns && mappedMarkers}
+        </GoogleMap>
+      }
+      </div>
     )
   }
 }

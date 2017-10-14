@@ -4,6 +4,9 @@ import axios from 'axios'
 
 function submit(values) {
 
+  delete values.tickBox1
+  delete values.tickBox2
+
   const ROOT_URL = 'http://ec2-54-77-236-165.eu-west-1.compute.amazonaws.com:3000';
 
   axios.post(`${ROOT_URL}/jobseeker/signup`,values)

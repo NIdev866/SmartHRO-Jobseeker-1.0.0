@@ -1,24 +1,25 @@
-import React from 'react'
+import React, { Component, PropTypes } from 'react'
 import {connect} from 'react-redux'
 import {submit} from 'redux-form'
+import RaisedButton from 'material-ui/RaisedButton'
 
-const style = {
-  padding: '10px 20px',
-  width: 140,
-  display: 'block',
-  margin: '20px auto',
-  fontSize: '16px'
+
+class RemoteSubmitButton extends Component {
+	render(){
+		return(
+		  <RaisedButton
+		    type="button"
+		    label={this.context.t("Submit")}
+		    primary={true}
+		    onClick={() => this.props.dispatch(submit('wizard'))}
+		  />
+		)
+	}
 }
-
-const RemoteSubmitButton = ({dispatch}) => (
-  <button
-    type="button"
-    style={style}
-    onClick={() => dispatch(submit('wizard'))}
-  >
-    Submit
-  </button>
-)
 //                                  ^^^^^^^^^^^^ name of the form
+
+RemoteSubmitButton.contextTypes = {
+  t: PropTypes.func.isRequired
+}
 
 export default connect()(RemoteSubmitButton)

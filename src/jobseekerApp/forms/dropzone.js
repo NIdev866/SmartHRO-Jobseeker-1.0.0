@@ -1,4 +1,4 @@
-import React from "react"
+import React, { PropTypes } from "react"
 import Dropzone from 'react-dropzone'
 import { reduxForm } from 'redux-form'
 import validate from './validate'
@@ -26,7 +26,8 @@ class Basic extends React.Component {
     const boxStyling = {
       display: "block",
       margin: "auto",
-      width: "200px"
+      width: "200px",
+      marginTop: '20px',
     }
     const ulStyling = {
       overflowWrap: "break-word",
@@ -43,8 +44,7 @@ class Basic extends React.Component {
             onDrop={this.onDrop.bind(this)}
             accept=".doc,.rtf,.wps,.odt,.wpd,.txt,.pdf,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           >
-            <p>Tap to upload CV</p>
-            <p>(Required)</p>
+            <p>{this.context.t('Tap to upload CV')}</p>
             <ul style={ulStyling}>
               {
                 this.state.files.map(f => <li key={f.name}>{f.name}</li>)
@@ -55,6 +55,10 @@ class Basic extends React.Component {
       </section>
     )
   }
+}
+
+Basic.contextTypes = {
+  t: PropTypes.func.isRequired
 }
 
 export default reduxForm({

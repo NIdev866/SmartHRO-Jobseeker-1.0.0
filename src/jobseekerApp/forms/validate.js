@@ -1,18 +1,18 @@
 const validate = values => {
   const errors = {}
   if (!values.first_name) {
-    errors.firstName = 'Required'
+    errors.first_name = 'Required'
   }else if(values.first_name.length > 12) {
-    errors.firstName = 'Input too long'
+    errors.first_name = 'Input too long'
   }else if(values.first_name.match(/[0-9]/g)){
-    errors.firstName = "Invalid name - must not contain numbers"
+    errors.first_name = "Invalid name - must not contain numbers"
   }
   if (!values.last_name) {
-    errors.lastName = 'Required'
+    errors.last_name = 'Required'
   }else if(values.last_name.length > 12) {
-    errors.lastName = 'Input too long'
+    errors.last_name = 'Input too long'
   }else if(values.last_name.match(/[0-9]/g)){
-    errors.lastName = "Invalid name - must not contain numbers"
+    errors.last_name = "Invalid name - must not contain numbers"
   }
   if (!values.age) {
     errors.ageRange = "Required"
@@ -58,14 +58,14 @@ const validate = values => {
     errors.emailCopy = ""
   }
   if(!values.postal_code){
-    errors.post_code = 'Required'
+    errors.postal_code = 'Required'
   }else if(values.postal_code.length > 12){
     errors.postal_code = 'Too long'
   }
   if(!values.house_no){
-    errors.houseNumber = 'Required'
+    errors.house_no = 'Required'
   }else if(values.house_no.length > 6){
-    errors.houseNumber = 'Too long'
+    errors.house_no = 'Too long'
   }
   if (!values.student) {
     errors.student = 'Required'
@@ -80,11 +80,19 @@ const validate = values => {
     errors.willing_to_travel = 'Required'
   }
   if (!values.when_to_start_work) {
-    errors.when_can_start = 'Required'
+    errors.when_to_start_work = 'Required'
   }
-  if (!values.CV) {
+  if (!values.tickBox1) {
+    errors.tickBox1 = 'Required'
+  }
+  if (!values.tickBox2) {
+    errors.tickBox2 = 'Required'
+  }
+
+
+/*  if (!values.CV) {
     errors.CV = 'Selection Required'
-  }
+  }*/
   return errors
 }
 

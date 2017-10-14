@@ -40,7 +40,7 @@ class SlideElement extends Component {
    }
    return (
      <div style={{position: "relative"}}>
-       {this.props.screenWidth <= 700 &&
+       {this.props.screenWidth <= 900 &&
          <div onClick={this.props.sliderClick} style={{height: '50px', borderBottom: "1px solid #CCCCCC "}}>
            <div style={{position: "relative", width: "400px", margin: "0 auto"}}>
              <div style={{color: "grey", lineHeight: "50px", position: "absolute", width: "80px",left: "120px"}}>
@@ -59,11 +59,11 @@ class SlideElement extends Component {
          <h3>{this.context.t('Select maximum 3 job boxes to apply for them.')}<br/>
              {this.context.t('Click on the job to read more about it.')}</h3>
          <div style={{width: '100%', height: '450px'}}>
-           <JobCards userMarker={this.props.userMarker} screenWidth={this.props.screenWidth}/>
+           <JobCards userMarker={this.props.userMarker} screenWidth={this.props.screenWidth} width={this.props.width}/>
          </div>
        </div>
 
-       {this.props.screenWidth <= 700 &&
+       {this.props.screenWidth <= 900 &&
          <div style={footerStyle}>
            <RaisedButton primary={true}
            onClick={this.props.nextPage}

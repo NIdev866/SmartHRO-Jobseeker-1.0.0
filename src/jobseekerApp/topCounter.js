@@ -30,7 +30,7 @@ class TopCounter extends Component {
     const bgColorTwo = this.props.finishedStep <= 3 ? emptyBg : colouredBg
     const bgColorThree = this.props.finishedStep <= 4 ? emptyBg : colouredBg
     const bgColorFour = this.props.finishedStep <= 7 ? emptyBg : colouredBg
-    //const bgColorFive = this.props.finishedStep <= 8 ? emptyBg : colouredBg
+    const bgColorFive = this.props.finishedStep <= 8 ? emptyBg : colouredBg
     return(
       <div style={{margin: "20px"}}>
         <div style={{...circleStyle, ...bgColorOne}} ><h4 style={{"marginTop": "2px"}}>1</h4></div>
@@ -40,8 +40,8 @@ class TopCounter extends Component {
         <div style={{...circleStyle, ...bgColorThree}}><h4 style={{"marginTop": "2px"}}>3</h4></div>
         <div style={arrows}>&#10140;</div>
         <div style={{...circleStyle, ...bgColorFour}}><h4 style={{"marginTop": "2px"}}>4</h4></div>
-{/*        <div style={arrows}>&#10140;</div>
-        <div style={{...circleStyle, ...bgColorFive}}><h4 style={{"marginTop": "2px"}}>5</h4></div>*/}
+        <div style={arrows}>&#10140;</div>
+        <div style={{...circleStyle, ...bgColorFive}}><h4 style={{"marginTop": "2px"}}>5</h4></div>
       </div>
     )}
 }

@@ -1,6 +1,6 @@
 export const translations = {
   'pl': {
-    'Your rough location to see distance (Optional)':'Twoja ogolna lokacja zeby zobaczyc dystans (Opcjonalne)',
+    'Your location to see distance':'Twoja lokacja zeby obliczyc dystans',
   	'Loading...': 'Wczytywanie...',
     'Temporary': 'Tymczasowe',
     'Full-time': 'Pelnoetatowe',
@@ -10,7 +10,7 @@ export const translations = {
     'per hour': 'na godzine',
     'Starting on': 'Poczatek pracy',
     'Distance:':'Dystans:',
-    'Enter your rough location in the top left corner of map':'Wpisz swoja ogolna lokacje w lewym gornym rogu mapy',
+    'Enter your location':'Wpisz swoja lokacje',
     'away': 'od ciebie',
     'ALL JOBS': 'PRACE',
     'PLEASE APPLY FOR JOBS BY REGISTERING WITH US.':'ZLOZ PODANIE O PRACE POPRZEZ REJESTRACJE U NAS.',
@@ -42,10 +42,36 @@ export const translations = {
     'Tap to upload CV from Google Drive':'Kliknij zeby wyslac CV z Google Driva',
     'I will send my CV later':'Wysle swoje CV pozniej',
     'You have to email your CV within next 7 days to: _________':'Musisz wyslac swoje CV emailem w ciagu 7 dni do: _________',
-    'Not found.':'Nie znaleziono.'
+    'Not found.':'Nie znaleziono.',
+    'Submit':'Wyslij',
+    'Tap to upload CV':'Kliknij zeby wybrac CV',
+    'Ref number: ':'Numer ogloszenia: ',
+    "I'm between 18-20 yrs old":'Mam pomiedzy 18-20 lat',
+    "I'm between 21-24 yrs old":'Mam pomiedzy 21-24 lat',
+    "I'm between 25-49 yrs old":'Mam pomiedzy 25-49 lat',
+    "I'm between 50-59 yrs old":'Mam pomiedzy 50-59 lat',
+    "I'm between 60+ yrs old":'Mam ponad 60 lat',
+    'I can start from tomorrow':'Od jutra',
+    'From day after tomorrow':'Od pojutrze',
+    'From next week':'Od nastepnego tygodnia',
+    'After two weeks':'Za ponad dwa tygodnie',
 
 
 
+    'Required': 'Wymagane',
+    'Input too long': 'Za dlugie',
+    'Invalid name - must not contain numbers':'Niepoprawne - nie moze zawierac numerow',
+    'One valid number required':'Jeden poprawny numer wymagany',
+    'Invalid number':'Niepoprawny numer',
+    'Invalid email address':'Niepoprawny adres email',
+    "Emails don't match":"Emaile sie roznia",
+
+
+    'I confirm all the details above are correct and true to the best of my ability':
+    'Sprawdzilem i potwierdzam ze informacje powyzej sa zgodne z prawda',
+
+    'I agree for my information to be processed for recruitment purposes only':
+    'Zgadzam sie na przetwarzanie moich danych osobowych tylko do celow rekrutacyjnych'
 
   }
 }

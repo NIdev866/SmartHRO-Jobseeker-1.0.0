@@ -7,6 +7,7 @@ import FormFifthPage from './forms/form_5'
 import FormSixthPage from "./forms/form_6"
 import FormSeventhPage from "./forms/form_7"
 import FormEithPage from "./forms/form_8"
+import FormNinthPage from "./forms/form_9"
 import RaisedButton from 'material-ui/RaisedButton'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import styles from './forms/form_material_styles'
@@ -112,20 +113,19 @@ class JobseekerParent extends Component {
     this.props.dispatch(setLanguage(e.target.value))
   }
 
-
-
-
-
-
-
   autocompleteOnChange(address){
     this.setState({ address })
   }
+
   handleSelect(address) {
     this.setState({
       address,
       loading: true
     })
+
+
+    //this.refs.thingToBlur.focus()
+
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
@@ -211,7 +211,7 @@ class JobseekerParent extends Component {
 
   render() {
     let footerStyle = {}
-    if(this.state.width > 700){
+    if(this.state.width > 900){
       footerStyle = {
         textAlign: "center",
         position: "fixed",
@@ -231,7 +231,7 @@ class JobseekerParent extends Component {
       footerStyle = {}
     }
     let slideComponentStyle = {}
-    if(this.state.width > 700){
+    if(this.state.width > 900){
       if(this.state.slider != "closed"){
         this.setState({slider: 'closed'})
       }
@@ -245,7 +245,8 @@ class JobseekerParent extends Component {
           borderTop: "1px solid #CCCCCC",
           width: this.state.width / 100 * 40,
           left: this.state.width / 100 * 60,
-          top: "0"
+          top: "0",
+          borderLeft: '1px solid #CCCCCC'
         }
       }
     }
@@ -291,7 +292,7 @@ class JobseekerParent extends Component {
       }
     }
     let mapComponentStyle = {}
-    if(this.state.width > 700){
+    if(this.state.width > 900){
       mapComponentStyle = {
         float: "left",
         width: "60%",
@@ -307,10 +308,10 @@ class JobseekerParent extends Component {
         height: this.state.height - 50
       }
     }
-    let styleObj
-    if(this.state.width > 700){
-      styleObj = {
-        input: { padding: "6px", width: "320px"},
+    let placesAutocompleteStyle
+    if(this.state.width > 900){
+      placesAutocompleteStyle = {
+        input: { padding: "6px", width: this.state.width / 100 * 50, height: '30px', fontSize: '20px', boxShadow: '5px 5px 5px #888888'},
         autocompleteContainer: {
         zIndex: "99999", width: "100%"},
         autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
@@ -319,8 +320,8 @@ class JobseekerParent extends Component {
       }
     }
     else{
-      styleObj = {
-        input: { padding: "6px", width: "calc(100vw - 24px)"},
+      placesAutocompleteStyle = {
+        input: { padding: "6px", width: "calc(100vw - 24px)", height: '30px', fontSize: '20px', boxShadow: '5px 5px 5px #888888'},
         autocompleteContainer: {
         zIndex: "99999", width: "100%"},
         autocompleteItem: { color: '#000', fontSize: "12px", padding: "3px" },
@@ -328,16 +329,25 @@ class JobseekerParent extends Component {
         googleLogoImage: { width: "10px"}
       }
     }
-    const inputStyling = {
-      position: "fixed",
-      top: "4",
-      marginLeft: "4",
+    let inputStyling = {}
+    if(this.state.width > 900){
+      inputStyling = {
+        position: "fixed",
+        top: "60",
+        marginLeft: this.state.width / 100 * 4,
+      }
+    }
+    else{
+      inputStyling = {
+        position: "fixed",
+        top: "90",
+        marginLeft: "4"
+      }
     }
     const inputProps = {
       value: this.state.address,
       onChange: this.autocompleteOnChange,
-      placeholder: this.context.t('Your rough location to see distance (Optional)') ,
-      autoFocus: true,
+      placeholder: this.context.t('Your location to see distance') ,
     }
     const { onSubmit } = this.props
     const { page } = this.state
@@ -349,7 +359,6 @@ class JobseekerParent extends Component {
                 {this.props.allCampaigns &&
                   <MapComponent
                     zoom={10}
-                    center={{ lat: 51.537452, lng: -0.497681}}
                     containerElement={<div style={{height: 100+"%"}} />}
                     mapElement={<div style={{height: 100+"%"}} />}
                     allCampaigns={this.props.allCampaigns}
@@ -360,7 +369,7 @@ class JobseekerParent extends Component {
                 <div style={inputStyling}>
                   <PlacesAutocomplete
                     onSelect={this.handleSelect}
-                    styles={styleObj}
+                    styles={placesAutocompleteStyle}
                     inputProps={inputProps}
                     onEnterKeyDown={this.handleSelect}
                   />
@@ -368,8 +377,8 @@ class JobseekerParent extends Component {
                   {!this.state.loading && this.state.geocodeResults ?
                         <div className='geocoding-results'>{this.state.geocodeResults}</div> :
                       null}
-                  <div style={{zIndex: '999999',}}>
-                    <div style={{display: 'inline-block', float: 'left'}}>
+                  <div style={{zIndex: '9',}}>
+                    <div style={{display: 'inline-block', float: 'right', zIndex: '9'}}>
                       <select value={this.props.lang} onChange={this.onChangeLang}>
                         {this.languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
                       </select>
@@ -383,6 +392,7 @@ class JobseekerParent extends Component {
                     sliderClick={this.sliderClick}
                     openIconStyle={openIconStyle}
                     userMarker={this.state.userMarker}
+                    width={this.state.width}
                    />
                 </div>
               </div>
@@ -393,7 +403,7 @@ class JobseekerParent extends Component {
               />}
           <Row center="xs">
             <Col xs={12} sm={12} md={2} lg={8}>
-              {page === 1 && this.state.width > 700 && <div style={footerStyle}>
+              {page === 1 && this.state.width > 900 && <div style={footerStyle}>
                 <RaisedButton primary={true}
                 style={styles.raisedButtonStyle}
                 label={this.context.t("APPLY")}
@@ -410,41 +420,55 @@ class JobseekerParent extends Component {
                   <FormFirstPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 3 &&
                   <FormSecondPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 4 &&
                   <FormThirdPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 5 &&
                   <FormFourthPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 66 &&
                   <FormFifthPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 6 &&
                   <FormSixthPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 7 &&
                   <FormSeventhPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
+                    width={this.state.width}
                   />}
                 {page === 8 &&
                   <FormEithPage
                     previousPage={this.previousPage}
+                    onSubmit={this.nextPage}
+                    width={this.state.width}
+                  />}
+                {page === 9 &&
+                  <FormNinthPage
+                    previousPage={this.previousPage}
                     onSubmit={onSubmit}
+                    width={this.state.width}
                   />}
             </Animation>
           </Col>
