@@ -7,6 +7,11 @@ import { connect } from "react-redux"
 import { getFormValues } from 'redux-form'
 import { fetchCompanies, fetchAllCampaigns } from '../actions'
 
+
+import ReactHtmlParser from 'react-html-parser'
+
+
+
 const google = window.google
 
 class CheckboxComponent extends Component{
@@ -121,7 +126,7 @@ class CardExampleExpandable extends Component{
         avoidHighways: false,
         avoidTolls: false,
       }, (result, status) => {
-        if(result.rows[0].elements[0].status == "ZERO_RESULTS"){
+        if(result && result.rows[0].elements[0].status == "ZERO_RESULTS"){
           if(this.state[`distance${i}`] && this.state[`distance${i}`] !== " ___________"){
             return this.setState({    // prevState?
               [`distance${i}`]: " ___________"
@@ -152,6 +157,16 @@ class CardExampleExpandable extends Component{
     const cardStyle = {
       marginTop: "20px",
     }
+    let cardHeaderStyle = {}
+    if(this.props.width > 900){
+      cardHeaderStyle = {
+        height: "160px", textAlign: "left"
+      }
+    }else{
+      cardHeaderStyle = {
+        height: "180px", textAlign: "left"
+      }
+    }
 
 
 
@@ -173,7 +188,7 @@ class CardExampleExpandable extends Component{
             </div>
             <Card style={cardStyle}>
               <CardHeader
-                style={{height: "180px", textAlign: "left"}}
+                style={cardHeaderStyle}
                 actAsExpander={true}
                 showExpandableButton={true}
                 iconStyle={{position: "relative", left: "12px"}}
@@ -203,13 +218,13 @@ class CardExampleExpandable extends Component{
                   this.state[`distance${i}`] + ' ' + this.context.t("away") : 
                   this.context.t('Enter your location')}</p>
               </CardHeader>
-                  <CardText expandable={true}>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-      Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-      Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
-    </CardText>
-          </Card>
+
+              <CardText expandable={true} style={{padding: '5px', textAlign: 'left', borderTop: '1px solid rgb(204,204,204)', overflow: 'hidden'}}>
+                  
+                  {ReactHtmlParser(campaign.job_description)}
+
+              </CardText>
+            </Card>
           </div>
         )
         })}

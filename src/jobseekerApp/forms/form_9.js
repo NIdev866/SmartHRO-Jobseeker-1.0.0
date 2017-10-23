@@ -70,8 +70,84 @@ class FormNinthPage extends Component{
       delete all_values_copy.jobs_selected
       delete all_values_copy.emailCopy
 
+
+      let pairToReturn = {}
+
       return _.map(all_values_copy, function(value, key) {
-        return <div><span>{key}</span>{": "}<span>{value}</span></div>
+
+
+
+        if(key == 'first_name'){
+          pairToReturn = {
+            key: 'First name',
+            value: value
+          }
+        }
+        else if(key == 'last_name'){
+          pairToReturn = {
+            key: 'Last name',
+            value: value
+          }
+        }
+        else if(key == 'contact_no'){
+          pairToReturn = {
+            key: 'Contact number',
+            value: value
+          }
+        }
+        else if(key == 'email_id'){
+          pairToReturn = {
+            key: 'Email',
+            value: value
+          }
+        }
+        else if(key == 'first_work_in_uk'){
+          pairToReturn = {
+            key: 'First work in uk',
+            value: value
+          }
+        }
+        else if(key == 'self_employed'){
+          pairToReturn = {
+            key: 'Self employed',
+            value: value
+          }
+        }
+        else if(key == 'willing_to_travel'){
+          pairToReturn = {
+            key: 'Willing to travel',
+            value: value
+          }
+        }
+        else{
+          pairToReturn = {
+            key: key,
+            value: value
+          }
+        }
+
+
+
+        if(key == 'when_to_start_work'){
+          pairToReturn.key = 'When to start work'
+        }
+
+        if(value == 'CAN_START_TOMORR'){
+          pairToReturn.value = 'Can start tomorrow'
+        }
+        else if(value == 'CAN_START_DAYAFTER'){
+          pairToReturn.value = 'Can start day after'
+        }
+        else if(value == 'CAN_START_NEXTWEEK'){
+          pairToReturn.value = 'Can start next week'
+        }
+        else if(value == 'CAN_START_INTWOWEEKS'){
+          pairToReturn.value = 'Can start in two weeks'
+        }
+
+
+
+        return <div><span>{pairToReturn.key}</span>{": "}<span>{pairToReturn.value}</span></div>
       });
     }
   }

@@ -1,6 +1,6 @@
 {
   "name": "team-supporter-client",
-  "url":"http://smart-hro-jobseeker.s3-website-eu-west-1.amazonaws.com",
+  "url": "http://smart-hro-jobseeker.s3-website-eu-west-1.amazonaws.com",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -23,6 +23,7 @@
     "react-flexbox-grid": "1.1.4",
     "react-google-maps": "7.2.0",
     "react-google-picker": "0.0.5",
+    "react-html-parser": "^2.0.1",
     "react-places-autocomplete": "5.4.2",
     "react-redux": "5.0.6",
     "react-resize-detector": "^0.6.0",
