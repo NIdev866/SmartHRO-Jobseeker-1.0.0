@@ -10,6 +10,7 @@ import { fetchCompanies, fetchAllCampaigns } from '../actions'
 
 import ReactHtmlParser from 'react-html-parser'
 
+import CircularProgress from 'material-ui/CircularProgress';
 
 
 const google = window.google
@@ -172,7 +173,7 @@ class CardExampleExpandable extends Component{
 
     return(
       <div style={{margin: '2px', marginBottom: '55px'}}>
-        {this.props.allCampaigns && this.props.companies && this.props.allCampaigns.map((campaign, i) => {
+        {this.props.allCampaigns && this.props.companies ? this.props.allCampaigns.map((campaign, i) => {
           console.log(campaign)
           this.createDuration(parseFloat(campaign.lat), parseFloat(campaign.lng), i)
           return(
@@ -227,7 +228,12 @@ class CardExampleExpandable extends Component{
             </Card>
           </div>
         )
-        })}
+        })
+        :
+        <div style={{paddingTop: 'calc(50% - 140px)'}}>
+          <CircularProgress color="black" size={80}  thickness={7}/>
+        </div>
+      }
       </div>
     )
   }

@@ -9,77 +9,55 @@ import { connect } from 'react-redux'
 import Paper from 'material-ui/Paper';
 
 class FormThirdPage extends Component{
- render(){
-  const { handleSubmit, previousPage } = this.props
+  content(){
+    const { handleSubmit, previousPage } = this.props
+    return(
+      <div>
+        <Row center="xs" style={{height: 360,  width: '80%', margin: '0 auto'}}>
+          <Col xs={10} sm={10} md={3} lg={5}>
+            <Field
+              name="contact_no"
+              type="text"
+              component={renderField}
+              label={this.context.t("Mobile Number")}
+            />
+            <Field
+              name="landline_no"
+              type="text"
+              component={renderField}
+              label={this.context.t("Landline Number")}
+            />
+          </Col>
+        </Row>
+        <Row center="xs">
+          <RaisedButton
+            type="button"
+            label={this.context.t('Prev')}
+            primary={true}
+            onClick={previousPage}
+            style={styles.raisedButtonStyle}
+          />
+          <RaisedButton
+            type="submit"
+            label={this.context.t('Next')}
+            primary={true}
+            style={styles.raisedButtonStyle}
+          />
+        </Row>
+      </div>
+    )
+  }
+  render(){
+    const { handleSubmit, previousPage } = this.props
     return (
       <form onSubmit={handleSubmit}>
         {this.props.width > 700 ?
           <Paper style={{maxWidth: '700px', margin: '0 auto'}} zDepth={2} rounded={false}>
-            <Row center="xs" style={{height: 360,  width: '80%', margin: '0 auto'}}>
-              <Col xs={10} sm={10} md={3} lg={5}>
-                <Field
-                  name="contact_no"
-                  type="text"
-                  component={renderField}
-                  label={this.context.t("Mobile Number")}
-                />
-                <Field
-                  name="landline_no"
-                  type="text"
-                  component={renderField}
-                  label={this.context.t("Landline Number")}
-                />
-              </Col>
-            </Row>
-            <Row center="xs">
-              <RaisedButton
-                type="button"
-                label={this.context.t('Prev')}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Row>
+            {this.content()}
           </Paper>
           :
           <div>
-            <Row center="xs" style={{height: 360}}>
-              <Col xs={10} sm={10} md={3} lg={5}>
-                <Field
-                  name="contact_no"
-                  type="text"
-                  component={renderField}
-                  label={this.context.t("Mobile Number")}
-                />
-                <Field
-                  name="landline_no"
-                  type="text"
-                  component={renderField}
-                  label={this.context.t("Landline Number")}
-                />
-              </Col>
-            </Row>
-            <Row center="xs">
-              <RaisedButton
-                type="button"
-                label={this.context.t('Prev')}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Row>
+            {this.content()}
           </div>
         }
       </form>

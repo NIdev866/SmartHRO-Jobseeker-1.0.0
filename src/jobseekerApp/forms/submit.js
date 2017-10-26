@@ -1,8 +1,16 @@
 import { SubmissionError } from 'redux-form'
 import axios from 'axios'
 
+import {
+  CREATE_CAMPAIGN_SUBMITTING_STARTED,
+  CREATE_CAMPAIGN_SUBMITTING_SUCCESSFUL,
+  CREATE_CAMPAIGN_SUBMITTING_FAILED
+} from '../../actions/types.js';
 
-function submit(values) {
+function submit(values, dispatch) {
+
+  dispatch({ type: CREATE_CAMPAIGN_SUBMITTING_STARTED })
+
 
   delete values.tickBox1
   delete values.tickBox2
@@ -34,12 +42,19 @@ function submit(values) {
                })
             });
 
+          dispatch({ type: CREATE_CAMPAIGN_SUBMITTING_SUCCESSFUL })
+
       })
       .catch(function (err) {
         console.log('ERROR FROM SERVER '+err);
-         throw new SubmissionError({
+
+                       //CREATE_CAMPAIGN_SUBMITTING_FAILED
+        dispatch({ type: CREATE_CAMPAIGN_SUBMITTING_FAILED })
+
+
+/*         throw new SubmissionError({
            _error: JSON.stringify(err)
-         })
+         })*/
       });
 
 }

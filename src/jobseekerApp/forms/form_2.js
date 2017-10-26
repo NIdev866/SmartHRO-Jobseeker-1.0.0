@@ -35,7 +35,6 @@ RenderError.contextTypes = {
 }
 
 class FormSecondPage extends Component {
-
   constructor(props){
     super(props)
     this.state = {
@@ -43,7 +42,6 @@ class FormSecondPage extends Component {
     }
     this.handleLoaderState = this.handleLoaderState.bind(this)
   }
-
   renderAgeSelector(ageDataSet){
     return ageDataSet.map(val =>{
 
@@ -64,9 +62,6 @@ class FormSecondPage extends Component {
       if(val.primaryText == "I'm between 60+ yrs old"){
         valCopy = this.context.t("I'm between 60+ yrs old")
       }
-
-
-
       return <MenuItem key={val.id} value={val.value} primaryText={valCopy}/>
     })
   }
@@ -81,8 +76,8 @@ class FormSecondPage extends Component {
     })
   }
 
-  render(){
-    const { handleSubmit, previousPage } = this.props
+  content(){
+    const { handleSubmit, previousPage } = this.props    
     const radiosParentDiv = {
       textAlign: "center",
       margin: "0 auto",
@@ -104,93 +99,67 @@ class FormSecondPage extends Component {
       width: "45px",
       marginLeft: "30px"
     }
+    return(
+      <div>
+        <div style={{marginTop: "20px", width: '80%', margin: '0 auto'}}>
+          <div style={{marginTop: "30px", marginBottom: "33px"}}>
+            <div style={{marginBottom: "-30px"}}>{this.context.t('Gender')}</div>
+            <div style={radiosParentDiv}>
+              <Field style={genderParentStyle} name="gender" component={RadioButtonGroup}>
+                <RadioButton disableTouchRipple style={genderStyle} value="male"/>
+                <RadioButton disableTouchRipple style={genderStyle2} value="female"/>
+              </Field>
+              <div style={{...genderParentStyle, marginLeft: "5px"}}>
+                <span style={{marginRight: "65px"}}>{this.context.t('Male')}</span><span>{this.context.t('Female')}</span>
+              </div>
+              <Field name="gender" component={RenderError} />
+            </div>
+          </div>
+          <div style={{marginBottom: "20px"}}>
+            <Field name="age" component={SelectField}
+                  selectedMenuItemStyle={{color: "#00BCD4"}}
+                  underlineStyle={{display: "none"}} errorStyle={{display: "none"}}
+                  hintText={this.context.t('Select your age group')} >
+                  {this.renderAgeSelector(ageRanges)}
+            </Field>
+            <Field name="age" component={RenderError} />
+          </div>
+        <div>
+          <Field name="postal_code" type="text" component={renderField}
+                label={this.context.t('Your postal code (to see distance only)')} >
+          </Field>
+        </div>
+        </div>
+        <Col xs={12} sm={6} md={3} lg={5} style={{marginTop: "113px"}}>
+          <RaisedButton
+            type="button"
+            label={this.context.t('Prev')}
+            primary={true}
+            onClick={previousPage}
+            style={styles.raisedButtonStyle}
+          />
+          <RaisedButton
+            type="submit"
+            label={this.context.t('Next')}
+            primary={true}
+            style={styles.raisedButtonStyle}
+          />
+        </Col>
+      </div>
+    )
+  }
+
+  render(){
+    const { handleSubmit, previousPage } = this.props
     return (
       <form onSubmit={handleSubmit}>
-
-
         {this.props.width > 700 ?
           <Paper style={{maxWidth: '700px', margin: '0 auto', paddingTop: '10px'}} zDepth={2} rounded={false}>
-            <div style={{marginTop: "20px", width: '80%', margin: '0 auto'}}>
-              <div style={{marginTop: "30px", marginBottom: "33px"}}>
-                <div style={{marginBottom: "-30px"}}>{this.context.t('Gender')}</div>
-                <div style={radiosParentDiv}>
-                  <Field style={genderParentStyle} name="gender" component={RadioButtonGroup}>
-                    <RadioButton disableTouchRipple style={genderStyle} value="male"/>
-                    <RadioButton disableTouchRipple style={genderStyle2} value="female"/>
-                  </Field>
-                  <div style={{...genderParentStyle, marginLeft: "5px"}}>
-                    <span style={{marginRight: "65px"}}>{this.context.t('Male')}</span><span>{this.context.t('Female')}</span>
-                  </div>
-                  <Field name="gender" component={RenderError} />
-                </div>
-              </div>
-              <div style={{marginBottom: "20px"}}>
-                <Field name="age" component={SelectField}
-                      selectedMenuItemStyle={{color: "#00BCD4"}}
-                      underlineStyle={{display: "none"}} errorStyle={{display: "none"}}
-                      hintText={this.context.t('Select your age group')} >
-                      {this.renderAgeSelector(ageRanges)}
-                </Field>
-                <Field name="age" component={RenderError} />
-              </div>
-            </div>
-            <Col xs={12} sm={6} md={3} lg={5} style={{marginTop: "113px"}}>
-              <RaisedButton
-                type="button"
-                label={this.context.t('Prev')}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Col>
+            {this.content()}
           </Paper>
           :
-          <div>
           <div style={{marginTop: "20px"}}>
-            <div style={{marginTop: "30px", marginBottom: "33px"}}>
-              <div style={{marginBottom: "-30px"}}>{this.context.t('Gender')}</div>
-              <div style={radiosParentDiv}>
-                <Field style={genderParentStyle} name="gender" component={RadioButtonGroup}>
-                  <RadioButton disableTouchRipple style={genderStyle} value="male"/>
-                  <RadioButton disableTouchRipple style={genderStyle2} value="female"/>
-                </Field>
-                <div style={{...genderParentStyle, marginLeft: "5px"}}>
-                  <span style={{marginRight: "65px"}}>{this.context.t('Male')}</span><span>{this.context.t('Female')}</span>
-                </div>
-                <Field name="gender" component={RenderError} />
-              </div>
-            </div>
-            <div style={{marginBottom: "20px"}}>
-              <Field name="age" component={SelectField}
-                    selectedMenuItemStyle={{color: "#00BCD4"}}
-                    underlineStyle={{display: "none"}} errorStyle={{display: "none"}}
-                    hintText={this.context.t('Select your age group')} >
-                    {this.renderAgeSelector(ageRanges)}
-              </Field>
-              <Field name="age" component={RenderError} />
-            </div>
-            </div>
-            <Col xs={12} sm={6} md={3} lg={5} style={{marginTop: "113px"}}>
-              <RaisedButton
-                type="button"
-                label={this.context.t('Prev')}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Col>
+            {this.content()}
           </div>
         }
       </form>

@@ -32,6 +32,9 @@ class renderField extends Component{
           {(this.props.meta.dirty || this.props.meta.touched) && this.props.meta.error == "Invalid number" ? <span>{this.context.t('Invalid number')}</span> : ""}
           {(this.props.meta.dirty || this.props.meta.touched) && this.props.meta.error == "Invalid email address" ? <span>{this.context.t('Invalid email address')}</span> : ""}
           {(this.props.meta.dirty || this.props.meta.touched) && this.props.meta.error == "Emails don't match" ? <span>{this.context.t("Emails don't match")}</span> : ""}
+          {(this.props.meta.dirty || this.props.meta.touched) && this.props.meta.error == "Too long" ? <span>{this.context.t("Too long")}</span> : ""}
+
+
         </div>
       </div>
   )

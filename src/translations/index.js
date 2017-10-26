@@ -24,6 +24,8 @@ export const translations = {
     "I'm between":'Mam pomiedzy',
     'yrs old':'lat',
     'Select your age group':'Wybierz swoja grupe wiekowa',
+    'Your postal code (to see distance only)':'Twoj kod pocztowy (do kalkulacji dystansu)',
+    'Too long':'Za dlugie',
     'Select your nationality':'Wybierz swoja narodowosc',
     'Gender':'Plec',
     'Male':'Meszczyzna',
@@ -55,6 +57,7 @@ export const translations = {
     'From day after tomorrow':'Od pojutrze',
     'From next week':'Od nastepnego tygodnia',
     'After two weeks':'Za ponad dwa tygodnie',
+
 
 
 

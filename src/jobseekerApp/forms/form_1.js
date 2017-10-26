@@ -250,85 +250,63 @@ const renderError = ({ input, meta: { touched, error } }) => (
 )
 
 class FormFirstPage extends Component{
+  content(){
+    const { handleSubmit, previousPage } = this.props
+    return(
+      <div>
+        <Row center="xs" style={{height: 360, width: '80%', margin: '0 auto'}}>
+          <Col xs={10} sm={10} md={3} lg={5}>
+            <Field
+              name={first_name}
+              type="text"
+              component={renderField}
+              label={this.context.t('First Name')}
+            />
+            <Field
+              name={last_name}
+              type="text"
+              component={renderField}
+              label={this.context.t('Last Name')}
+            />
+            <Field name="nationality" component={SelectField} 
+              hintText="Select your nationality" 
+              selectedMenuItemStyle={{color: "#00BCD4"}} 
+              underlineStyle={{display: "none"}} 
+              errorStyle={{display: "none"}}>
+            {countries.map(country => <MenuItem value={country} primaryText={country}/>)}
+            </Field>
+            <Field name="nationality" component={renderError} />
+          </Col>
+        </Row>
+        <Row center="xs">
+          <RaisedButton
+            type="button"
+            label={this.context.t('Prev')}
+            primary={true}
+            onClick={previousPage}
+            style={styles.raisedButtonStyle}
+          />
+          <RaisedButton
+            type="submit"
+            label={this.context.t('Next')}
+            primary={true}
+            style={styles.raisedButtonStyle}
+          />
+        </Row>
+      </div>
+    )
+  }
  render(){
   const { handleSubmit, previousPage } = this.props
     return (
       <form onSubmit={handleSubmit}>
         {this.props.width > 700 ?
           <Paper style={{maxWidth: '700px', margin: '0 auto'}} zDepth={2} rounded={false}>
-            <Row center="xs" style={{height: 360, width: '80%', margin: '0 auto'}}>
-              <Col xs={10} sm={10} md={3} lg={5}>
-                <Field
-                  name={first_name}
-                  type="text"
-                  component={renderField}
-                  label={this.context.t('First Name')}
-                />
-                <Field
-                  name={last_name}
-                  type="text"
-                  component={renderField}
-                  label={this.context.t('Last Name')}
-                />
-                <Field name="nationality" component={SelectField} 
-                  hintText="Select your nationality" 
-                  selectedMenuItemStyle={{color: "#00BCD4"}} 
-                  underlineStyle={{display: "none"}} 
-                  errorStyle={{display: "none"}}>
-                {countries.map(country => <MenuItem value={country} primaryText={country}/>)}
-                </Field>
-                <Field name="nationality" component={renderError} />
-              </Col>
-            </Row>
-            <Row center="xs">
-              <RaisedButton
-                type="button"
-                label={this.context.t('Prev')}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Row>
+            {this.content()}
           </Paper>
           :
           <div>
-            <Row center="xs" style={{height: 360}}>
-              <Col xs={10} sm={10} md={3} lg={5}>
-                  <Field
-                    name={first_name}
-                    type="text"
-                    component={renderField}
-                    label={this.context.t('First Name')}
-                  />
-                  <Field
-                    name={last_name}
-                    type="text"
-                    component={renderField}
-                    label={this.context.t('Last Name')}
-                  />
-              </Col>
-            </Row>
-            <Row center="xs">
-              <RaisedButton
-                type="button"
-                label={this.context.t('Prev')}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Row>
+            {this.content()}
           </div>
         }
       </form>

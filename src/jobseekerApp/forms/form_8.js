@@ -127,102 +127,83 @@ Dropbox.contextTypes = {
 
 
 class FormEithPage extends Component{
- render(){
 
+  content(){
+  const { handleSubmit, previousPage } = this.props
+    return(
+      <div>
+        <Row center="xs" style={{height: 360}}>
+          <Col xs={10} sm={10} md={3} lg={5}>
+            <Field
+              name="CV"
+              type="text"
+              component={Dropbox}
+              label="CV"
+            />
+            <Field
+              name="CV"
+              type="text"
+              component={GoogleDrive}
+              label="CV"
+            />
+
+{/*              <Dropzone            //some other version if the original dropdone doesnt work
+                name="CV"
+                classNameLabel="file-input-label"
+                className="file-input"
+                dropzone_options={{
+                  multiple: false,
+                  accept: '.doc,.rtf,.wps,.odt,.wpd,.txt,.pdf,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                }}
+              >
+                <span>Add more</span>
+              </Dropzone>*/}
+  
+            <Field
+              name="CV"
+              type="text"
+              component={Dropzone}
+              label="CV"
+            />
+  {/*
+           <Field
+              name="CV"
+              type="text"
+              component={Later}
+              label="CV"
+            />*/}
+          </Col>
+        </Row>
+        <Row center="xs" style={{marginTop: '20px'}}>
+          <RaisedButton
+            type="button"
+            label={this.context.t("Prev")}
+            primary={true}
+            onClick={previousPage}
+            style={styles.raisedButtonStyle}
+          />
+          <RaisedButton
+            type="submit"
+            label={this.context.t('Next')}
+            primary={true}
+            style={styles.raisedButtonStyle}
+          />
+        </Row>
+      </div>
+    )
+  }
+
+ render(){
   const { handleSubmit, previousPage } = this.props
     return (
       <form onSubmit={handleSubmit}>
         {this.props.width > 700 ?
           <Paper style={{maxWidth: '700px', margin: '0 auto', paddingTop: '10px'}} zDepth={2} rounded={false}>
-            <Row center="xs" style={{height: 360, width: '80%', margin: '0 auto'}}>
-              <Col xs={10} sm={10} md={3} lg={5}>
-                <Field
-                  name="CV"
-                  type="text"
-                  component={Dropbox}
-                  label="CV"
-                />
-                <Field
-                  name="CV"
-                  type="text"
-                  component={GoogleDrive}
-                  label="CV"
-                />
-                <Field
-                  name="CV"
-                  type="text"
-                  component={Dropzone}
-                  label="CV"
-                />
-{/*                <Field
-                  name="CV"
-                  type="text"
-                  component={Later}
-                  label="CV"
-                />*/}
-              </Col>
-            </Row>
-            <Row center="xs" style={{marginTop: '20px'}}>
-              <RaisedButton
-                type="button"
-                label={this.context.t("Prev")}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Row>
+            {this.content()}
           </Paper>
           :
           <div>
-            <Row center="xs" style={{height: 360}}>
-              <Col xs={10} sm={10} md={3} lg={5}>
-                <Field
-                  name="CV"
-                  type="text"
-                  component={Dropbox}
-                  label="CV"
-                />
-                <Field
-                  name="CV"
-                  type="text"
-                  component={GoogleDrive}
-                  label="CV"
-                />
-                <Field
-                  name="CV"
-                  type="text"
-                  component={Dropzone}
-                  label="CV"
-                />
-{/*                <Field
-                  name="CV"
-                  type="text"
-                  component={Later}
-                  label="CV"
-                />*/}
-              </Col>
-            </Row>
-            <Row center="xs" style={{marginTop: '20px'}}>
-              <RaisedButton
-                type="button"
-                label={this.context.t("Prev")}
-                primary={true}
-                onClick={previousPage}
-                style={styles.raisedButtonStyle}
-              />
-              <RaisedButton
-                type="submit"
-                label={this.context.t('Next')}
-                primary={true}
-                style={styles.raisedButtonStyle}
-              />
-            </Row>
+            {this.content()}
           </div>
         }
       </form>

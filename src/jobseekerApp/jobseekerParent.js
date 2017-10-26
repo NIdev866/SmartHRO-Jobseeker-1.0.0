@@ -25,6 +25,8 @@ import JobCards from './jobCards'
 import SlideComponent from './slideComponent'
 import {setLanguage} from 'redux-i18n'
 
+import CircularProgress from 'material-ui/CircularProgress';
+
 config()
 const google = window.google
 
@@ -330,11 +332,15 @@ class JobseekerParent extends Component {
       }
     }
     let inputStyling = {}
+    let mapLoadingCircleStyle = {}
     if(this.state.width > 900){
       inputStyling = {
         position: "fixed",
         top: "60",
         marginLeft: this.state.width / 100 * 4,
+      }
+      mapLoadingCircleStyle = {
+        paddingTop: 'calc(50% - 140px)'
       }
     }
     else{
@@ -342,6 +348,9 @@ class JobseekerParent extends Component {
         position: "fixed",
         top: "90",
         marginLeft: "4"
+      }
+      mapLoadingCircleStyle = {
+        paddingTop: 'calc(50% - 40px)'
       }
     }
     const inputProps = {
@@ -356,7 +365,11 @@ class JobseekerParent extends Component {
             {page === 1 &&
               <div>
                 <div style={mapComponentStyle}>
-                {this.props.allCampaigns &&
+                {!this.props.allCampaigns ?
+                  <div style={mapLoadingCircleStyle}>
+                      <CircularProgress color="black" size={80}  thickness={7}/>
+                  </div>
+                  :
                   <MapComponent
                     zoom={10}
                     containerElement={<div style={{height: 100+"%"}} />}
