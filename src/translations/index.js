@@ -57,10 +57,6 @@ export const translations = {
     'From day after tomorrow':'Od pojutrze',
     'From next week':'Od nastepnego tygodnia',
     'After two weeks':'Za ponad dwa tygodnie',
-
-
-
-
     'Required': 'Wymagane',
     'Input too long': 'Za dlugie',
     'Invalid name - must not contain numbers':'Niepoprawne - nie moze zawierac numerow',
@@ -68,13 +64,12 @@ export const translations = {
     'Invalid number':'Niepoprawny numer',
     'Invalid email address':'Niepoprawny adres email',
     "Emails don't match":"Emaile sie roznia",
-
-
     'I confirm all the details above are correct and true to the best of my ability':
     'Sprawdzilem i potwierdzam ze informacje powyzej sa zgodne z prawda',
-
     'I agree for my information to be processed for recruitment purposes only':
-    'Zgadzam sie na przetwarzanie moich danych osobowych tylko do celow rekrutacyjnych'
+    'Zgadzam sie na przetwarzanie moich danych osobowych tylko do celow rekrutacyjnych',
+
+    "All questions have to be answered": 'Wszystkie musza miec odpowiedz'
 
   }
 }

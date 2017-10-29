@@ -29,8 +29,8 @@ class SlideElement extends Component {
      backgroundColor: 'white',
      position: "absolute",
      left: "0",
-     bottom: "0",
-     paddingBottom: "2px",
+     top: this.props.height - 60,
+     paddingBottom: "32px",
      width: "100%",
      borderTop: "1px solid",
      borderColor: "#DCDCDC ",
@@ -38,6 +38,7 @@ class SlideElement extends Component {
      overflow: "hidden",
      height: "60px"
    }
+
    return (
      <div style={{position: "relative"}}>
        {this.props.screenWidth <= 900 &&
@@ -58,7 +59,7 @@ class SlideElement extends Component {
          <h2>{this.context.t('PLEASE APPLY FOR JOBS BY REGISTERING WITH US.')}</h2>
          <h3>{this.context.t('Select maximum 3 job boxes to apply for them.')}<br/>
              {this.context.t('Click on the job to read more about it.')}</h3>
-         <div style={{width: '100%', height: '450px'}}>
+         <div style={{width: '100%'}}>
            <JobCards userMarker={this.props.userMarker} screenWidth={this.props.screenWidth} width={this.props.width}/>
          </div>
        </div>

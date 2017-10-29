@@ -11,6 +11,7 @@ import MenuItem from 'material-ui/MenuItem'
 import { RadioButtonGroup, SelectField } from "redux-form-material-ui"
 
 
+import FontIcon from 'material-ui/FontIcon';
 
 const countries = [
   "Afghanistan",
@@ -250,32 +251,88 @@ const renderError = ({ input, meta: { touched, error } }) => (
 )
 
 class FormFirstPage extends Component{
+
+  constructor(props){
+    super(props)
+    this.state = {
+      helpBoxOpen: false
+    }
+  }
+
   content(){
     const { handleSubmit, previousPage } = this.props
+
+    let helpBoxStyle = {transition: "all .2s ease-in-out", overflow: 'hidden'}
+
+    if(this.state.helpBoxOpen){
+      helpBoxStyle = {
+        ...helpBoxStyle,
+        height: '100px'
+      }
+    }
+    else{
+      helpBoxStyle = {
+        ...helpBoxStyle,
+        height: '0px'
+      }
+    }
+
+
+
     return(
       <div>
-        <Row center="xs" style={{height: 360, width: '80%', margin: '0 auto'}}>
+        <Row center="xs" style={{height: 360, width: '80%', margin: '0 auto', position: 'relative'}}>
           <Col xs={10} sm={10} md={3} lg={5}>
-            <Field
-              name={first_name}
-              type="text"
-              component={renderField}
-              label={this.context.t('First Name')}
-            />
-            <Field
-              name={last_name}
-              type="text"
-              component={renderField}
-              label={this.context.t('Last Name')}
-            />
-            <Field name="nationality" component={SelectField} 
-              hintText="Select your nationality" 
-              selectedMenuItemStyle={{color: "#00BCD4"}} 
-              underlineStyle={{display: "none"}} 
-              errorStyle={{display: "none"}}>
-            {countries.map(country => <MenuItem value={country} primaryText={country}/>)}
-            </Field>
-            <Field name="nationality" component={renderError} />
+
+
+            <div style={{width: '90%'}}>
+
+              <div>
+                  <Field
+                    name={first_name}
+                    type="text"
+                    component={renderField}
+                    label={this.context.t('First Name')}
+                  />
+                <div style={{width: '24px', height: '24px', padding: 0, top: '35px', right: '15px', 
+                  position: 'absolute', cursor: 'pointer', 
+                  display: 'inline-block', borderRadius: '50%'}}
+                  onClick={()=>{
+                    if(this.state.helpBoxOpen){
+                      this.setState({helpBoxOpen: false})
+                    }
+                    else{
+                      this.setState({helpBoxOpen: true})
+                    }
+                  }}
+                  >
+                  <FontIcon style={{color: '#00BCD4', fontSize: '30px'}} className="material-icons">help_outline</FontIcon>
+                </div>
+              </div>
+              <div style={helpBoxStyle}>
+                <div style={{border: '2px solid', borderRadius: "10px", 
+                  width: 'calc(100% - 4px)', height: 'calc(100% - 4px)'}}>
+                  hint box
+                </div>
+              </div>
+              <Field
+                name={last_name}
+                type="text"
+                component={renderField}
+                label={this.context.t('Last Name')}
+              />
+              <Field name="nationality" component={SelectField} 
+                hintText="Select your nationality" 
+                selectedMenuItemStyle={{color: "#00BCD4"}} 
+                underlineStyle={{display: "none"}} 
+                errorStyle={{display: "none"}}>
+              {countries.map(country => <MenuItem value={country} primaryText={country}/>)}
+              </Field>
+              <Field name="nationality" component={renderError} />
+
+            </div>
+
+
           </Col>
         </Row>
         <Row center="xs">

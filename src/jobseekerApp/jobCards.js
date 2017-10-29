@@ -155,26 +155,9 @@ class CardExampleExpandable extends Component{
     const tickButtonStyle = {
       float: "right",
     }
-    const cardStyle = {
-      marginTop: "20px",
-    }
-    let cardHeaderStyle = {}
-    if(this.props.width > 900){
-      cardHeaderStyle = {
-        height: "160px", textAlign: "left"
-      }
-    }else{
-      cardHeaderStyle = {
-        height: "180px", textAlign: "left"
-      }
-    }
-
-
-
     return(
       <div style={{margin: '2px', marginBottom: '55px'}}>
         {this.props.allCampaigns && this.props.companies ? this.props.allCampaigns.map((campaign, i) => {
-          console.log(campaign)
           this.createDuration(parseFloat(campaign.lat), parseFloat(campaign.lng), i)
           return(
             <div>
@@ -187,9 +170,9 @@ class CardExampleExpandable extends Component{
                 boxesTicked={this.state.boxesTicked}
               />
             </div>
-            <Card style={cardStyle}>
+            <Card style={{marginTop: "20px"}}>
               <CardHeader
-                style={cardHeaderStyle}
+                style={{textAlign: "left"}}
                 actAsExpander={true}
                 showExpandableButton={true}
                 iconStyle={{position: "relative", left: "12px"}}

@@ -1,9 +1,11 @@
 import { 
   ALL_CAMPAIGNS,
   COMPANIES,
-  CREATE_CAMPAIGN_SUBMITTING_STARTED,
-  CREATE_CAMPAIGN_SUBMITTING_SUCCESSFUL,
-  CREATE_CAMPAIGN_SUBMITTING_FAILED
+  JOBSEEKER_APPLICATION_SUBMITTING_STARTED,
+  JOBSEEKER_APPLICATION_SUBMITTING_SUCCESSFUL,
+  JOBSEEKER_APPLICATION_SUBMITTING_FAILED,
+
+  SAVE_TO_VIEW_ADDITIONAL_QUESTIONS
 } from '../actions/types';
 
 export default function(state = {}, action) {
@@ -14,15 +16,17 @@ export default function(state = {}, action) {
       return { ...state, companies: action.payload }
 
 
-    case CREATE_CAMPAIGN_SUBMITTING_STARTED:
+    case JOBSEEKER_APPLICATION_SUBMITTING_STARTED:
       return {...state, createCampaignSubmittingStarted: true, createCampaignSubmittingSuccessful: false, createCampaignSubmittingFailed: false}
 
-    case CREATE_CAMPAIGN_SUBMITTING_SUCCESSFUL:
+    case JOBSEEKER_APPLICATION_SUBMITTING_SUCCESSFUL:
       return {...state, createCampaignSubmittingStarted: false, createCampaignSubmittingSuccessful: true, createCampaignSubmittingFailed: false}
 
-    case CREATE_CAMPAIGN_SUBMITTING_FAILED:
+    case JOBSEEKER_APPLICATION_SUBMITTING_FAILED:
       return {...state, createCampaignSubmittingStarted: false, createCampaignSubmittingSuccessful: false, createCampaignSubmittingFailed: true}
 
+    case SAVE_TO_VIEW_ADDITIONAL_QUESTIONS:
+      return {...state, additionalQuestionsState: action.payload}
 
     default:
       return state;

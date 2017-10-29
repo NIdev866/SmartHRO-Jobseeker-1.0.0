@@ -2,18 +2,20 @@ import { SubmissionError } from 'redux-form'
 import axios from 'axios'
 
 import {
-  CREATE_CAMPAIGN_SUBMITTING_STARTED,
-  CREATE_CAMPAIGN_SUBMITTING_SUCCESSFUL,
-  CREATE_CAMPAIGN_SUBMITTING_FAILED
+  JOBSEEKER_APPLICATION_SUBMITTING_STARTED,
+  JOBSEEKER_APPLICATION_SUBMITTING_SUCCESSFUL,
+  JOBSEEKER_APPLICATION_SUBMITTING_FAILED
 } from '../../actions/types.js';
 
 function submit(values, dispatch) {
 
-  dispatch({ type: CREATE_CAMPAIGN_SUBMITTING_STARTED })
+  dispatch({ type: JOBSEEKER_APPLICATION_SUBMITTING_STARTED })
 
 
   delete values.tickBox1
   delete values.tickBox2
+
+  delete values.numberOfCustomQuestionsJobseekerHasToAnswer
 
   const ROOT_URL = 'http://ec2-54-77-236-165.eu-west-1.compute.amazonaws.com:3000';
 
@@ -42,14 +44,14 @@ function submit(values, dispatch) {
                })
             });
 
-          dispatch({ type: CREATE_CAMPAIGN_SUBMITTING_SUCCESSFUL })
+          dispatch({ type: JOBSEEKER_APPLICATION_SUBMITTING_SUCCESSFUL })
 
       })
       .catch(function (err) {
         console.log('ERROR FROM SERVER '+err);
 
-                       //CREATE_CAMPAIGN_SUBMITTING_FAILED
-        dispatch({ type: CREATE_CAMPAIGN_SUBMITTING_FAILED })
+                       //JOBSEEKER_APPLICATION_SUBMITTING_FAILED
+        dispatch({ type: JOBSEEKER_APPLICATION_SUBMITTING_FAILED })
 
 
 /*         throw new SubmissionError({

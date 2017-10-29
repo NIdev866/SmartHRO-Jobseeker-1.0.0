@@ -8,6 +8,7 @@ import FormSixthPage from "./forms/form_6"
 import FormSeventhPage from "./forms/form_7"
 import FormEithPage from "./forms/form_8"
 import FormNinthPage from "./forms/form_9"
+import FormLastPage from "./forms/form_9_last"
 import RaisedButton from 'material-ui/RaisedButton'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import styles from './forms/form_material_styles'
@@ -15,22 +16,22 @@ import TopCounter from "./topCounter"
 import Animation from 'react-addons-css-transition-group'
 import { config } from "dotenv"
 import { connect } from 'react-redux'
-import { fetchAllCampaigns, fetchCompanies } from '../actions'
+import { fetchAllCampaigns, fetchCompanies, saveToViewAdditionalQuestions } from '../actions'
 import { Marker, GoogleMap, DirectionsRenderer } from "react-google-maps"
-
 import MapComponent from "./mapComponent"
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
-
 import JobCards from './jobCards'
 import SlideComponent from './slideComponent'
 import {setLanguage} from 'redux-i18n'
-
 import CircularProgress from 'material-ui/CircularProgress';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+
+
+import { Field, reduxForm, formValueSelector, change } from 'redux-form'
 
 config()
 const google = window.google
-
-
 
 class JobseekerParent extends Component {
   constructor(props) {
@@ -59,22 +60,40 @@ class JobseekerParent extends Component {
       geocodeResults: null,
       loading: false,
       slider: "closed",
-
-
-      width: '0', height: '0'
+      width: '0', height: '0',
+      languageSelectionModalOpen: true
     }
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-
-
-
-
     this.languages = ['pl', 'en']
+    this.startLanguageSelection = this.startLanguageSelection.bind(this)
+    this.determineIfAdditionalQuestionsExist = this.determineIfAdditionalQuestionsExist.bind(this)
+  }
+  startLanguageSelection(languageChosen){
+    this.props.dispatch(setLanguage(languageChosen))
+    const first_time = localStorage.getItem('first_time');
+    if(first_time === null){
+      localStorage.setItem('first_time', true)
+      this.setState({tutorialIsOpen: true})
+    }
+    else{
+      localStorage.setItem('first_time', false)
+    }
   }
   sliderClick(){
+    const first_time = localStorage.getItem('first_time');
+    if(this.state.tutorialIsOpen){
+      this.setState({tutorialIsOpen: false})
+      localStorage.setItem('first_time', false)
+    }
     const { slider } = this.state
     this.setState({slider: slider == "closed" ? "open" : "closed"})
   }
   nextPage() {
+    const first_time = localStorage.getItem('first_time');
+    if(this.state.tutorialIsOpen){
+      this.setState({tutorialIsOpen: false})
+      localStorage.setItem('first_time', false)
+    }
     this.setState({
       page: this.state.page + 1,
       slide: "toLeft"
@@ -91,43 +110,34 @@ class JobseekerParent extends Component {
       userMarker: newMarker
     })
   }
-
   componentWillMount(){
     this.props.fetchAllCampaigns()
     this.props.fetchCompanies()
     this.props.dispatch(setLanguage('en'))
+    this.props.dispatch(change('wizard', 'answers_to_extra_questions', []))
   }
-
   componentDidMount() {
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
   }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
-
   updateWindowDimensions() {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
-
   onChangeLang = (e) => {
     this.props.dispatch(setLanguage(e.target.value))
   }
-
   autocompleteOnChange(address){
     this.setState({ address })
   }
-
   handleSelect(address) {
     this.setState({
       address,
       loading: true
     })
-
-
     //this.refs.thingToBlur.focus()
-
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
@@ -149,7 +159,6 @@ class JobseekerParent extends Component {
         this.handleUpdatingMarker(0, 0)
       })
   }
-
   handleUpdatingMarker(lat, lng){
     let newMarker = {
       position: {
@@ -159,8 +168,6 @@ class JobseekerParent extends Component {
     this.updateUserMarker(newMarker)
     this.createRoutes()
   }
-
-
   renderGeocodeSuccess(lat, lng) {}
   renderGeocodeFailure(err) {
     return (
@@ -173,8 +180,6 @@ class JobseekerParent extends Component {
       </div>
     )
   }
-
-
   createRoutes(){
     for(let i = 0; i < this.props.allCampaigns.length; i++){
       let routesArray = []
@@ -206,11 +211,47 @@ class JobseekerParent extends Component {
       })
     }
   }
+  determineIfAdditionalQuestionsExist(){
+    let iDsOfAllSelectedCampaigns = []
+    this.props.jobs_selected.map((job)=>{
+      iDsOfAllSelectedCampaigns.push(job.campaign_id)
+    })
+    let copyOfAllCampaigns = [...this.props.allCampaigns]
+    let campaignsHeSelected = []
+    if(iDsOfAllSelectedCampaigns !== []){
+      iDsOfAllSelectedCampaigns.map((id)=>{
+        copyOfAllCampaigns.map((campaign)=>{
+          if(id == campaign.campaign_id){
+            campaignsHeSelected.push(campaign)
+          }
+        })
+      })
+    }
+    let arrayOfCampaignsHeChoseThatHaveAdditionalQuestions = []
+    campaignsHeSelected.map((singleCampaignHeSelected)=>{
+      if(singleCampaignHeSelected.map_q_camp_js_answ && singleCampaignHeSelected.map_q_camp_js_answ.length > 0){
+        arrayOfCampaignsHeChoseThatHaveAdditionalQuestions.push(singleCampaignHeSelected)
+      }
+    })
+    let arrayOfAllAdditionalQuestions = []
+    if(arrayOfCampaignsHeChoseThatHaveAdditionalQuestions.length > 0){
+      arrayOfCampaignsHeChoseThatHaveAdditionalQuestions.map((campaignWithAdditionalQuestions)=>{
+        arrayOfAllAdditionalQuestions.push(campaignWithAdditionalQuestions.map_q_camp_js_answ)
+      })
+      this.props.saveToViewAdditionalQuestions(...arrayOfAllAdditionalQuestions)
+      this.setState({
+        determinedIfAdditionalQuestionsExist: true,
+        additionalQuestionsToDisplay: 'exist'
+      })
+    }
+    else{
+      this.setState({
+        determinedIfAdditionalQuestionsExist: true,
+        additionalQuestionsToDisplay: 'none'
+      })
+    }
 
-
-
-
-
+  }
   render() {
     let footerStyle = {}
     if(this.state.width > 900){
@@ -248,7 +289,7 @@ class JobseekerParent extends Component {
           width: this.state.width / 100 * 40,
           left: this.state.width / 100 * 60,
           top: "0",
-          borderLeft: '1px solid #CCCCCC'
+          borderLeft: '1px solid #CCCCCC',
         }
       }
     }
@@ -333,6 +374,10 @@ class JobseekerParent extends Component {
     }
     let inputStyling = {}
     let mapLoadingCircleStyle = {}
+
+    let tutorialOneStyle = {}
+    let tutorialTwoStyle = {}
+
     if(this.state.width > 900){
       inputStyling = {
         position: "fixed",
@@ -342,8 +387,54 @@ class JobseekerParent extends Component {
       mapLoadingCircleStyle = {
         paddingTop: 'calc(50% - 140px)'
       }
+
+      tutorialOneStyle = {
+        top: '135px', 
+        left: '4%', 
+        zIndex: 1, 
+        position: 'absolute', 
+        width: "40%", 
+        height: "100px", 
+        border: '2px solid',
+        backgroundColor: 'white',
+        borderRadius: "10px"
+      }
+
+      tutorialTwoStyle = {
+        bottom: '95px', 
+        right: '41%', 
+        zIndex: 1, 
+        position: 'absolute', 
+        width: "50%", 
+        height: "100px", 
+        border: '2px solid',
+        backgroundColor: 'white',
+        borderRadius: "10px"
+      }
     }
     else{
+      tutorialOneStyle = {
+        top: '170px', 
+        right: '10px', 
+        zIndex: 1, 
+        position: 'absolute', 
+        width: "80%", 
+        height: "100px", 
+        border: '2px solid',
+        backgroundColor: 'white',
+        borderRadius: "10px"
+      }
+      tutorialTwoStyle = {
+        bottom: '60px', 
+        left: '10px', 
+        zIndex: 1, 
+        position: 'absolute', 
+        width: "80%", 
+        height: "100px", 
+        border: '2px solid',
+        backgroundColor: 'white',
+        borderRadius: "10px"
+      }
       inputStyling = {
         position: "fixed",
         top: "90",
@@ -361,9 +452,40 @@ class JobseekerParent extends Component {
     const { onSubmit } = this.props
     const { page } = this.state
     return (
-      <div style={{position: "relative", width: this.state.width, height: this.state.height, overflow: "hidden"}}>
+      <div style={{position: "relative", width: this.state.width - 1, 
+        height: this.state.height - 1, overflow: "hidden"}}>
             {page === 1 &&
               <div>
+                <Dialog
+                  modal={true}
+                  overlayStyle={{opacity: "0.6"}}
+                  open={this.state.languageSelectionModalOpen}
+                >
+                  <div style={{fontSize: '30px', marginBottom: '30px'}}><b>Select your language</b></div>
+                  <div style={{fontSize: '30px', marginBottom: '30px'}}><b>Wybierz swoj jezyk</b></div>
+                  <FlatButton
+                    label="POLSKI"
+                    primary={true}
+                    onClick={()=>{
+                      this.setState({languageSelectionModalOpen: false})
+                      this.startLanguageSelection('pl')
+                    }}
+                  />
+                  <FlatButton
+                    label="ENGLISH"
+                    primary={true}
+                    onClick={()=>{
+                      this.setState({languageSelectionModalOpen: false})
+                      this.startLanguageSelection('en')
+                    }}
+                  />
+                </Dialog>
+                {this.state.tutorialIsOpen && 
+                  <div>
+                    <div style={tutorialOneStyle}>TUTORIAL One</div>
+                    <div style={tutorialTwoStyle}>TUTORIAL Two</div>
+                  </div>
+                }
                 <div style={mapComponentStyle}>
                 {!this.props.allCampaigns ?
                   <div style={mapLoadingCircleStyle}>
@@ -406,6 +528,7 @@ class JobseekerParent extends Component {
                     openIconStyle={openIconStyle}
                     userMarker={this.state.userMarker}
                     width={this.state.width}
+                    height={this.state.height}
                    />
                 </div>
               </div>
@@ -435,12 +558,13 @@ class JobseekerParent extends Component {
                     onSubmit={this.nextPage}
                     width={this.state.width}
                   />}
-                {page === 3 &&
+                {page === 3 && 
                   <FormSecondPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                     width={this.state.width}
-                  />}
+                  />
+                }
                 {page === 4 &&
                   <FormThirdPage
                     previousPage={this.previousPage}
@@ -471,18 +595,67 @@ class JobseekerParent extends Component {
                     onSubmit={this.nextPage}
                     width={this.state.width}
                   />}
-                {page === 8 &&
+                {page === 8 && 
                   <FormEithPage
                     previousPage={this.previousPage}
                     onSubmit={this.nextPage}
                     width={this.state.width}
                   />}
-                {page === 9 &&
-                  <FormNinthPage
+
+
+
+
+                {this.props.jobs_selected && !this.props.jobs_selected.length == 0 && page === 9 &&
+
+                  <div>
+
+                    <div>
+                      {!this.state.determinedIfAdditionalQuestionsExist && this.determineIfAdditionalQuestionsExist()}
+                    </div>
+
+                    <div>
+                      {this.state.determinedIfAdditionalQuestionsExist && this.state.additionalQuestionsToDisplay == 'none' &&
+
+                        <FormLastPage
+                          previousPage={this.previousPage}
+                          onSubmit={onSubmit}
+                          width={this.state.width}
+                        />
+
+                      }
+
+                      {this.state.determinedIfAdditionalQuestionsExist && this.state.additionalQuestionsToDisplay != 'none' &&
+
+                        <FormNinthPage
+                          previousPage={this.previousPage}
+                          onSubmit={this.nextPage}
+                          width={this.state.width}
+                          additionalQuestionsToDisplay={this.state.additionalQuestionsToDisplay}
+                        />
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                }
+
+                {this.props.jobs_selected && !this.props.jobs_selected.length == 0 && page === 10 &&
+                  <FormLastPage
                     previousPage={this.previousPage}
                     onSubmit={onSubmit}
                     width={this.state.width}
-                  />}
+                  />
+                }
+
+                {this.props.jobs_selected && this.props.jobs_selected.length == 0 && page === 9 &&
+                  <FormLastPage
+                    previousPage={this.previousPage}
+                    onSubmit={onSubmit}
+                    width={this.state.width}
+                  />
+                }
             </Animation>
           </Col>
         </Row>
@@ -501,13 +674,26 @@ JobseekerParent.contextTypes = {
 }
 
 
+
+const selector2 = formValueSelector('wizard')
+JobseekerParent = connect(
+  state => {
+    const jobs_selected = selector2(state, 'jobs_selected')
+    return {
+      jobs_selected
+    }
+  }
+)(JobseekerParent)
+
+
+
 function mapStateToProps(state) {
   return {
-    allCampaigns: state.jobseeker.allCampaigns,
+    allCampaigns: state.jobseeker.allCampaigns
   };
 }
 
-export default connect(mapStateToProps, { fetchAllCampaigns, fetchCompanies })(
+export default connect(mapStateToProps, { fetchAllCampaigns, fetchCompanies, saveToViewAdditionalQuestions })(
   connect(state => ({
     lang: state.i18nState.lang
   }))(JobseekerParent)

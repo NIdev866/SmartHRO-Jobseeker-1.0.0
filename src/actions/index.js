@@ -4,12 +4,32 @@ import axios from 'axios';
 import {
   COMPANIES,
   ALL_CAMPAIGNS,
-  ADD_DURATION_TO_CAMPAIGNS
+  ADD_DURATION_TO_CAMPAIGNS,
+
+  SAVE_TO_VIEW_ADDITIONAL_QUESTIONS
 } from './types.js';
 
 
 
-const ROOT_URL = 'http://ec2-54-77-236-165.eu-west-1.compute.amazonaws.com:3000';
+//const ROOT_URL = 'http://ec2-54-77-236-165.eu-west-1.compute.amazonaws.com:3000';
+
+const ROOT_URL = 'http://localhost:3000';
+
+
+
+
+
+
+
+
+export function saveToViewAdditionalQuestions(arrayOfAllAdditionalQuestions){
+  return{
+    type: SAVE_TO_VIEW_ADDITIONAL_QUESTIONS,
+    payload: arrayOfAllAdditionalQuestions
+  }
+}
+
+
 
 
 
